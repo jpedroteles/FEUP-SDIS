@@ -98,7 +98,8 @@ In addition, the client program shall print messages on the terminal describing 
 where:
 <oper> <opnd*> and have the same meaning and format of homonyms arguments from the command line and
 <out> is the value returned by the operation invoked or ''ERROR" if any error occurs.
-3 Documentation
+
+##3. Documentation
 
 MulticastSocket (Java Platform SE 8)
 A simple example on java.net.MulticastSocket (A very simple example to get started. One of thousands you can find on the Web.)
