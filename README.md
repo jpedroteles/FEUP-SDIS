@@ -98,3 +98,8 @@ where <oper> and <opnd*> are the arguments of the request
 <result>
 is the value returned by the server or ‘‘ERROR’’ if an error occurs.
 Food for thought: How can you prevent the client from hanging indefinitely in case of failure of the server or of lost messages? Is this a problem for the server?
+
+##5.  Documentation
+- [Sun's tutorial about the Java API for UDP] (http://docs.oracle.com/javase/tutorial/networking/datagrams/index.html)
+
+- [User Datagram Protocol] (http://tools.ietf.org/html/rfc768)
