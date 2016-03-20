@@ -63,22 +63,5 @@ public class Client {
 		}
 		return false;
 	}
-		
-	/*
-	public void test() throws NoSuchAlgorithmException, UnsupportedEncodingException, CloneNotSupportedException {
-		FileProcessor fp = new FileProcessor();
-		SingleFile file = new SingleFile();
-		
-		System.out.println("File name: " + "teste.txt");
-		String fileId = fp.get_fileId("teste.txt");
-		System.out.println("FileId: " + fileId);
-		file.setFileId(fileId);
-		int maxSize = 64*8*1000;
-		ArrayList<String> chunk_content = fp.get_chunks("teste.txt", maxSize);
-		for(int i=0;i<chunk_content.size();i++)
-		{
-			file.addChunk(chunk_content.get(i));
-		}
-	}*/
-	
+			
 }

@@ -4,12 +4,18 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+
+import parse_files.FileProcessor;
+import parse_files.SingleFile;
 
 public class TCP_Server {
 
-	public void communication(int port_number) throws IOException {       
+	public void communication(int port_number) throws IOException, NoSuchAlgorithmException, CloneNotSupportedException {       
 
 		String input;
 		String response;
@@ -21,7 +27,7 @@ public class TCP_Server {
 			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());             
 			input = inFromClient.readLine();             
 			System.out.println("Received: " + input);             
-			response = protocol(input) + '\n';             
+			response = processor(input) + '\n';             
 			outToClient.writeBytes(response);
 			if(response.equals("BACKUP PROTOCOL\n") || response.equals("RESTORE PROTOCOL\n") || response.equals("DELETE PROTOCOL\n") || response.equals("RECLAIM PROTOCOL\n")) {
 				break;
@@ -29,11 +35,28 @@ public class TCP_Server {
 		}       
 	}
 
-	public String protocol(String received) {
+	public String processor(String received) throws NoSuchAlgorithmException, UnsupportedEncodingException, CloneNotSupportedException {
 
+		FileProcessor fp = new FileProcessor();
+		SingleFile file = new SingleFile();
 		String[] temp=get_message(received).split(" ");
 		String ret=new String();
-
+		
+		System.out.println("File name: " + temp[1]);
+		String fileId = fp.get_fileId(temp[1]);
+		System.out.println("FileId: " + fileId);
+		file.setFileId(fileId);
+		int maxSize = 64*8*1000;
+		ArrayList<String> chunk_content = fp.get_chunks(temp[1], maxSize);
+		
+		for(int i=0;i<chunk_content.size();i++) {
+			file.addChunk(chunk_content.get(i));
+		}
+		
+		if(temp.length == 3) {
+			file.setReplicationDegree(Integer.parseInt(temp[2]));
+		}
+		
 		switch(temp[0]){
 		case("BACKUP"):ret="BACKUP PROTOCOL";break;
 		case("RESTORE"):ret="RESTORE PROTOCOL";break;
