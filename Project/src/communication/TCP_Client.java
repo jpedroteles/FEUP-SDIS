@@ -1,4 +1,4 @@
-package client_interface;
+package communication;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -18,7 +18,10 @@ public class TCP_Client {
 		String message=get_message(temp);
 		 
 		String response;   
-		BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));   
+		BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
+		if(inFromUser.equals(null)) {
+			System.out.println("Error: TCP-Client");
+		}
 		Socket clientSocket = new Socket(hostname, portNumber);   
 		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());   
 		BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));   

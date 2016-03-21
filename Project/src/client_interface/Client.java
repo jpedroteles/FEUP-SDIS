@@ -1,12 +1,8 @@
 package client_interface;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
+import communication.TCP_Client;
 
-import parse_files.FileProcessor;
-import parse_files.SingleFile;
 
 public class Client {
 
