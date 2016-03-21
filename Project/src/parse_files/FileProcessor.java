@@ -23,7 +23,7 @@ public class FileProcessor {
 		File inputFile = new File(filename);
 		FileInputStream inputStream;
 		int fileSize = (int) inputFile.length();
-		System.out.println("File Size: " + fileSize);
+		//System.out.println("File Size: " + fileSize);
 		int read=0, readLength = maxSize;
 		byte[] chunkPart;
 		boolean addLastChunk=false;
@@ -47,7 +47,7 @@ public class FileProcessor {
 				assert (read == chunkPart.length);
 
 				ret.add(new String(chunkPart));
-				System.out.println("New chunk added");
+				//System.out.println("New chunk added");
 				chunkPart=null;
 			}
 			inputStream.close();
