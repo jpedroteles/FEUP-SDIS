@@ -15,7 +15,13 @@ import parse_files.SingleFile;
 
 public class TCP_Server {
 
-	public void communication(int port_number) throws IOException, NoSuchAlgorithmException, CloneNotSupportedException {       
+	SingleFile file = new SingleFile();
+	
+	public SingleFile getFile() {
+		return file;
+	}
+
+	public String communication(int port_number) throws IOException, NoSuchAlgorithmException, CloneNotSupportedException {       
 
 		String input;
 		String response;
@@ -32,13 +38,13 @@ public class TCP_Server {
 			if(response.equals("BACKUP PROTOCOL\n") || response.equals("RESTORE PROTOCOL\n") || response.equals("DELETE PROTOCOL\n") || response.equals("RECLAIM PROTOCOL\n")) {
 				break;
 			}
-		}       
+		}
+		return response;
 	}
 
 	public String processor(String received) throws NoSuchAlgorithmException, UnsupportedEncodingException, CloneNotSupportedException {
 
 		FileProcessor fp = new FileProcessor();
-		SingleFile file = new SingleFile();
 		String[] temp=get_message(received).split(" ");
 		String ret=new String();
 		
@@ -52,7 +58,7 @@ public class TCP_Server {
 		for(int i=0;i<chunk_content.size();i++) {
 			file.addChunk(chunk_content.get(i));
 		}
-		
+		System.out.println(file.getChunks().size());
 		if(temp.length == 3) {
 			file.setReplicationDegree(Integer.parseInt(temp[2]));
 		}

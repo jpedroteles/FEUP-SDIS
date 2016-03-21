@@ -19,7 +19,7 @@ public class FileProcessor {
 	}
 
 	public ArrayList<String> get_chunks(String filename, int maxSize) {
-		
+
 		File inputFile = new File(filename);
 		FileInputStream inputStream;
 		int fileSize = (int) inputFile.length();
@@ -28,34 +28,34 @@ public class FileProcessor {
 		byte[] chunkPart;
 		boolean addLastChunk=false;
 		ArrayList<String> ret = new ArrayList<String>();
-		
+
 		if((fileSize % maxSize) == 0) {
 			addLastChunk=true;
 		}
-		
+
 		try {
 			inputStream = new FileInputStream(inputFile);
 			while(fileSize > 0){
-				
+
 				if(fileSize <= maxSize){
 					readLength = fileSize;
 				}
 				chunkPart = new byte[readLength];
 				read = inputStream.read(chunkPart,0,readLength);
 				fileSize -= read;
-				
+
 				assert (read == chunkPart.length);
-				
+
 				ret.add(new String(chunkPart));
 				System.out.println("New chunk added");
 				chunkPart=null;
 			}
 			inputStream.close();
-			
+
 		} catch (IOException exception){
 			exception.printStackTrace();
 		}
-		
+
 		if(addLastChunk) {
 			String s = new String();
 			ret.add(s);

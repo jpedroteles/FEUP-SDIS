@@ -29,6 +29,7 @@ public class SingleFile {
 		Chunk c = new Chunk();
 		c.setChunkId(this.chunks.size()+1);
 		c.setContent(chunk);
+		chunks.add(c);
 	}
 
 	public int getReplicationDegree() {
