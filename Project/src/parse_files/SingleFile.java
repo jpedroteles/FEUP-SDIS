@@ -24,7 +24,7 @@ public class SingleFile {
 		this.chunks = chunks;
 	}
 
-	public void addChunk(String chunk)
+	public void addChunk(byte[] chunk)
 	{
 		Chunk c = new Chunk();
 		c.setChunkId(this.chunks.size()+1);

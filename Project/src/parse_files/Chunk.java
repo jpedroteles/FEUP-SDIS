@@ -2,7 +2,7 @@ package parse_files;
 
 public class Chunk {
 	private int chunkId;
-	private String content;
+	private byte[] content;
 	private int replicationDegree = 0;
 	
 	public int getChunkId() {
@@ -11,10 +11,10 @@ public class Chunk {
 	public void setChunkId(int chunkId) {
 		this.chunkId = chunkId;
 	}
-	public String getContent() {
+	public byte[] getContent() {
 		return content;
 	}
-	public void setContent(String content) {
+	public void setContent(byte[] content) {
 		this.content = content;
 	}
 	public int getReplicationDegree() {

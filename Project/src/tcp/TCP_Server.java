@@ -1,4 +1,4 @@
-package communication;
+package tcp;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -20,9 +20,9 @@ public class TCP_Server implements Runnable {
 	private static String senderId="Server";
 	private static String version = "1.0";
 	private static char CRLF[] = {0xD,0xA};
-	static Thread thread1;
+	public static Thread thread1;
 	
-	TCP_Server() {
+	public TCP_Server() {
 		thread1 = new Thread(this, "Thread1 created");
 		thread1.start();
 	}
@@ -50,7 +50,7 @@ public class TCP_Server implements Runnable {
 		return response;
 	}
 
-	public String processor(String received) throws NoSuchAlgorithmException, UnsupportedEncodingException, CloneNotSupportedException {
+	public String processor(String received) throws NoSuchAlgorithmException, CloneNotSupportedException, IOException {
 
 		FileProcessor fp = new FileProcessor();
 		String[] temp=get_message(received).split(" ");
@@ -61,8 +61,7 @@ public class TCP_Server implements Runnable {
 		//System.out.println("FileId: " + fileId);
 		file.setFileId(fileId);
 		int maxSize = 64*8*1000;
-		ArrayList<String> chunk_content = fp.get_chunks(temp[1], maxSize);
-		
+		ArrayList<byte[]> chunk_content = fp.divide_in_chunks(temp[1], maxSize);
 		for(int i=0;i<chunk_content.size();i++) {
 			file.addChunk(chunk_content.get(i));
 		}
@@ -70,6 +69,8 @@ public class TCP_Server implements Runnable {
 		if(temp.length == 3) {
 			file.setReplicationDegree(Integer.parseInt(temp[2]));
 		}
+		fp.create_chunk_folder();
+		fp.write_chunks(file);
 		
 		switch(temp[0]){
 		case("BACKUP"):ret="BACKUP PROTOCOL";break;
@@ -136,18 +137,18 @@ public class TCP_Server implements Runnable {
 	public void run() {
 
 		while(true) {
+			System.out.println("TCP Thread is running");
 			try {
 				String messageType=communication(port_number);
 				System.out.println("Message from client recieved...");
-				System.out.println("Sending message...");
 				send_message(messageType, file);
 				Thread.sleep(1000);
 			}
 			catch(InterruptedException | NoSuchAlgorithmException | IOException | CloneNotSupportedException e) {
-		
+				System.out.println("TCP Catch");
 				break;
 			}
-			break;
+			System.out.println("TCP End");
 		}
 	}
 }

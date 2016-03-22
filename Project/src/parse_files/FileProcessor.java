@@ -18,7 +18,7 @@ public class FileProcessor {
 		return DatatypeConverter.printHexBinary(fileId);
 	}
 
-	public ArrayList<String> get_chunks(String filename, int maxSize) {
+	public ArrayList<byte[]> divide_in_chunks(String filename, int maxSize) {
 
 		File inputFile = new File(filename);
 		FileInputStream inputStream;
@@ -27,7 +27,7 @@ public class FileProcessor {
 		int read=0, readLength = maxSize;
 		byte[] chunkPart;
 		boolean addLastChunk=false;
-		ArrayList<String> ret = new ArrayList<String>();
+		ArrayList<byte[]> ret = new ArrayList<byte[]>();
 
 		if((fileSize % maxSize) == 0) {
 			addLastChunk=true;
@@ -46,7 +46,7 @@ public class FileProcessor {
 
 				assert (read == chunkPart.length);
 
-				ret.add(new String(chunkPart));
+				ret.add(chunkPart);
 				//System.out.println("New chunk added");
 				chunkPart=null;
 			}
@@ -57,9 +57,25 @@ public class FileProcessor {
 		}
 
 		if(addLastChunk) {
-			String s = new String();
+			byte[] s = new byte[maxSize];
 			ret.add(s);
 		}
 		return ret;
+	}
+	
+	public void write_chunks(SingleFile file) throws IOException {
+		
+		for(int i=0;i<file.getChunks().size();i++) {
+
+			String name = "chunks/"+file.getFileId()+"-"+i+".bin";
+			System.out.println(name);
+			Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(name), "utf-8"));
+			writer.write(new String(file.getChunks().get(i).getContent()));
+		}
+	}
+	
+	public void create_chunk_folder() {
+		File dir = new File("chunks");
+		dir.mkdir();
 	}
 }

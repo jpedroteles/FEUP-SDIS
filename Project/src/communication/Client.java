@@ -1,7 +1,8 @@
-package client_interface;
+package communication;
 
 import java.io.IOException;
-import communication.TCP_Client;
+
+import tcp.TCP_Client;
 
 
 public class Client {
