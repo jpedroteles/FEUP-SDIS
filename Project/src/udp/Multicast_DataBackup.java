@@ -8,8 +8,8 @@ import java.net.MulticastSocket;
 public class Multicast_DataBackup implements Runnable {
 
 	public static Thread mdb_thread;
-	public static int mdb_port=8885;
-	public static String mdb_address = "225.0.0.1";
+	public static int mdb_port=8887;
+	public static String mdb_address = "225.0.0.3";
 
 	public Multicast_DataBackup() {
 		mdb_thread = new Thread(this, "mdb_Thread created");

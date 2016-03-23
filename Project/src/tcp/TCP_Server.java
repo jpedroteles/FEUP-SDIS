@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 import parse_files.FileProcessor;
 import parse_files.SingleFile;
+import udp.Multicast_DataBackup;
+import udp.SendRequest;
 
 public class TCP_Server implements Runnable {
 
@@ -21,12 +23,12 @@ public class TCP_Server implements Runnable {
 	private static String version = "1.0";
 	private static char CRLF[] = {0xD,0xA};
 	public static Thread thread1;
-	
+
 	public TCP_Server() {
 		thread1 = new Thread(this, "Thread1 created");
 		thread1.start();
 	}
-	
+
 	public String communication(int port_number) throws IOException, NoSuchAlgorithmException, CloneNotSupportedException {       
 
 		String input;
@@ -55,7 +57,7 @@ public class TCP_Server implements Runnable {
 		FileProcessor fp = new FileProcessor();
 		String[] temp=get_message(received).split(" ");
 		String ret=new String();
-		
+
 		//System.out.println("File name: " + temp[1]);
 		String fileId = fp.get_fileId(temp[1]);
 		//System.out.println("FileId: " + fileId);
@@ -71,7 +73,7 @@ public class TCP_Server implements Runnable {
 		}
 		fp.create_chunk_folder();
 		fp.write_chunks(file);
-		
+
 		switch(temp[0]){
 		case("BACKUP"):ret="BACKUP PROTOCOL";break;
 		case("RESTORE"):ret="RESTORE PROTOCOL";break;
@@ -97,10 +99,16 @@ public class TCP_Server implements Runnable {
 		return ret;
 	}
 
-	public static void send_message(String type, SingleFile file) {
+	public static void send_message(String type, SingleFile file) throws IOException {
 
+		SendRequest send = new SendRequest();
 		String messageType=new String();
 		String fileId=file.getFileId();
+
+		int mc_port=8885;
+		String mc_address = "225.0.0.1";
+		int mdb_port=8887;
+		String mdb_address = "225.0.0.3";
 
 		if(type.equals("BACKUP PROTOCOL\n")) {
 			messageType="PUTCHUNK";
@@ -120,6 +128,16 @@ public class TCP_Server implements Runnable {
 		}
 		for(int i=0; i<file.getChunks().size(); i++) {
 			System.out.println(messageType + " " + version + " " + senderId + " " + fileId + " " + file.getChunks().get(i).getChunkId() + " " + file.getChunks().get(i).getReplicationDegree() + " " + "CRLF");
+
+			switch(messageType){
+
+			case("PUTCHUNK"):send.sendRequest("PUTCHUNK", mdb_port, mdb_address);break;
+			case("GETCHUNK"):send.sendRequest("GETCHUNK", mc_port, mc_address);break;
+			case("DELETE"):send.sendRequest("DELETE", mc_port, mc_address);break;
+			case("REMOVED"):send.sendRequest("REMOVED", mc_port, mc_address);break;
+			}
+
+
 		}	
 	}
 
