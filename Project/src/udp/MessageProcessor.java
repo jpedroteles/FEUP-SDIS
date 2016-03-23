@@ -15,7 +15,8 @@ public class MessageProcessor implements Runnable {
 	}
 
 	public void process_message(DatagramPacket packet) {
-		System.out.println("---> Processing message");
+		System.out.println("---> Processing message: ");
+
 	}
 
 	public void run() {

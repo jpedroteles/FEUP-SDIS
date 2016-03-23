@@ -5,6 +5,8 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
+import parser.ParseMessage;
+
 public class Multicast_DataBackup implements Runnable {
 
 	public static Thread mdb_thread;
@@ -12,6 +14,8 @@ public class Multicast_DataBackup implements Runnable {
 	public static String mdb_address = "225.0.0.3";
 	public static MulticastSocket mdb;
 	public static InetAddress mdbAddress;
+	public ParseMessage pm = new ParseMessage();
+	private static char crlf[] = {0xD,0xA};
 
 	public Multicast_DataBackup() throws IOException{
 		mdb = new MulticastSocket(mdb_port);
@@ -21,13 +25,15 @@ public class Multicast_DataBackup implements Runnable {
 		mdb_thread.start();
 	}
 
-	public void mdb_communication(int port_number, String adress) throws IOException{
+	public void mdb_communication() throws IOException{
 
 		byte[] data= new byte[65536];
-		DatagramPacket packet = new DatagramPacket(data, 65536, mdbAddress, port_number);
+		DatagramPacket packet = new DatagramPacket(data, 65536);
 
-		System.out.println("Awaiting to receive message");
+		System.out.println("MDB - waiting to receive message");
 		mdb.receive(packet);
+		//pm.getHeader(packet, crlf);
+		pm.getContent(packet, crlf);
 		
 		MessageProcessor msg_pro = new MessageProcessor(packet);
 	}
@@ -37,10 +43,9 @@ public class Multicast_DataBackup implements Runnable {
 		while(true) {
 			//System.out.println("mdb Thread is running");
 			try {
-				mdb_communication(mdb_port, mdb_address);
-				Thread.sleep(1000);
+				mdb_communication();
 			}
-			catch(InterruptedException |IOException e) {
+			catch(IOException e) {
 				//System.out.println("MDB - Exception");
 				break;
 			}

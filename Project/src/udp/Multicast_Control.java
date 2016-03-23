@@ -8,8 +8,8 @@ import java.net.MulticastSocket;
 public class Multicast_Control implements Runnable {
 
 	public static Thread mc_thread;
-	public static int mc_port=8887;
-	public static String mc_address = "225.0.0.3";
+	public static int mc_port=8885;
+	public static String mc_address = "225.0.0.1";
 	public static MulticastSocket mc;
 	public static InetAddress mcAddress;
 
@@ -21,12 +21,12 @@ public class Multicast_Control implements Runnable {
 		mc_thread.start();
 	}
 
-	public void mc_communication(int port_number, String adress) throws IOException{
+	public void mc_communication() throws IOException{
 
 		byte[] data= new byte[65536];
-		DatagramPacket packet = new DatagramPacket(data, 65536, mcAddress, port_number);
+		DatagramPacket packet = new DatagramPacket(data, 65536);
 
-		System.out.println("Awaiting to receive message");
+		System.out.println("MC - waiting to receive message");
 		mc.receive(packet);
 		
 		MessageProcessor msg_pro = new MessageProcessor(packet);
@@ -37,10 +37,9 @@ public class Multicast_Control implements Runnable {
 		while(true) {
 			//System.out.println("mc Thread is running");
 			try {
-				mc_communication(mc_port, mc_address);
-				Thread.sleep(1000);
+				mc_communication();
 			}
-			catch(InterruptedException |IOException e) {
+			catch(IOException e) {
 				//System.out.println("mc - Exception");
 				break;
 			}

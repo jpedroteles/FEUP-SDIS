@@ -11,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import parser.FileProcessor;
+import parser.ParseMessage;
 import parser.SingleFile;
 import udp.Multicast_DataBackup;
 import udp.SendRequest;
@@ -21,7 +22,7 @@ public class TCP_Server implements Runnable {
 	private static int port_number = 8080;
 	private static String senderId="Server";
 	private static String version = "1.0";
-	private static char CRLF[] = {0xD,0xA};
+	private static char crlf[] = {0xD,0xA};
 	public static Thread thread1;
 
 	public TCP_Server() {
@@ -62,7 +63,7 @@ public class TCP_Server implements Runnable {
 		String fileId = fp.get_fileId(temp[1]);
 		//System.out.println("FileId: " + fileId);
 		file.setFileId(fileId);
-		int maxSize = 64*8*1000;
+		int maxSize = 64*1000;
 		ArrayList<byte[]> chunk_content = fp.divide_in_chunks(temp[1], maxSize);
 		for(int i=0;i<chunk_content.size();i++) {
 			file.addChunk(chunk_content.get(i));
@@ -127,14 +128,17 @@ public class TCP_Server implements Runnable {
 			return;
 		}
 		for(int i=0; i<file.getChunks().size(); i++) {
-			System.out.println(messageType + " " + version + " " + senderId + " " + fileId + " " + file.getChunks().get(i).getChunkId() + " " + file.getChunks().get(i).getReplicationDegree() + " " + "CRLF");
-
+			//System.out.println(messageType + " " + version + " " + senderId + " " + fileId + " " + file.getChunks().get(i).getChunkId() + " " + file.getChunks().get(i).getReplicationDegree() + " " + "CRLF");
+			ParseMessage msg = new ParseMessage();
+			byte[] header = msg.header(messageType, version, senderId, fileId, file.getChunks().get(i).getChunkId(), file.getChunks().get(i).getReplicationDegree(), crlf);
+			byte[] message = msg.merge(header, file.getChunks().get(i).getContent());
+			
 			switch(messageType){
 
-			case("PUTCHUNK"):send.sendRequest("PUTCHUNK", mdb_port, mdb_address);break;
-			case("GETCHUNK"):send.sendRequest("GETCHUNK", mc_port, mc_address);break;
-			case("DELETE"):send.sendRequest("DELETE", mc_port, mc_address);break;
-			case("REMOVED"):send.sendRequest("REMOVED", mc_port, mc_address);break;
+			case("PUTCHUNK"):send.sendRequest(message, mdb_port, mdb_address);break;
+			case("GETCHUNK"):send.sendRequest(message, mc_port, mc_address);break;
+			case("DELETE"):send.sendRequest(message, mc_port, mc_address);break;
+			case("REMOVED"):send.sendRequest(message, mc_port, mc_address);break;
 			}
 		}	
 	}
