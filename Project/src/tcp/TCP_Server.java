@@ -10,8 +10,8 @@ import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-import parse_files.FileProcessor;
-import parse_files.SingleFile;
+import parser.FileProcessor;
+import parser.SingleFile;
 import udp.Multicast_DataBackup;
 import udp.SendRequest;
 
@@ -71,8 +71,8 @@ public class TCP_Server implements Runnable {
 		if(temp.length == 3) {
 			file.setReplicationDegree(Integer.parseInt(temp[2]));
 		}
-		fp.create_chunk_folder();
-		fp.write_chunks(file);
+		//fp.create_chunk_folder();
+		//fp.write_chunks(file);
 
 		switch(temp[0]){
 		case("BACKUP"):ret="BACKUP PROTOCOL";break;
@@ -136,8 +136,6 @@ public class TCP_Server implements Runnable {
 			case("DELETE"):send.sendRequest("DELETE", mc_port, mc_address);break;
 			case("REMOVED"):send.sendRequest("REMOVED", mc_port, mc_address);break;
 			}
-
-
 		}	
 	}
 
@@ -155,18 +153,18 @@ public class TCP_Server implements Runnable {
 	public void run() {
 
 		while(true) {
-			System.out.println("TCP Thread is running");
+			//System.out.println("TCP Thread is running");
 			try {
 				String messageType=communication(port_number);
-				System.out.println("Message from client recieved...");
+				//System.out.println("Message from client recieved...");
 				send_message(messageType, file);
 				Thread.sleep(1000);
 			}
 			catch(InterruptedException | NoSuchAlgorithmException | IOException | CloneNotSupportedException e) {
-				System.out.println("TCP Catch");
+				//System.out.println("TCP Catch");
 				break;
 			}
-			System.out.println("TCP End");
+			//System.out.println("TCP End");
 		}
 	}
 }

@@ -14,7 +14,7 @@ public class SendRequest {
 		socket.joinGroup(socketAddress);
 		
 		DatagramPacket packet = new DatagramPacket(message.getBytes(), message.getBytes().length, socketAddress, port_number);
-		System.out.println("Sending Package");
+		//System.out.println("Sending Package");
 		socket.send(packet);
 		System.out.println("Package Sent");	
 		

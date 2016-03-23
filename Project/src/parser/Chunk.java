@@ -1,4 +1,4 @@
-package parse_files;
+package parser;
 
 public class Chunk {
 	private int chunkId;

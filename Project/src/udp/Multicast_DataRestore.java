@@ -8,47 +8,50 @@ import java.net.MulticastSocket;
 public class Multicast_DataRestore implements Runnable {
 
 	public static Thread mdr_thread;
-	public static int mdr_port=8886;
-	public static String mdr_address = "225.0.0.2";
+	public static int mdr_port=8887;
+	public static String mdr_address = "225.0.0.3";
+	public static MulticastSocket mdr;
+	public static InetAddress mdrAddress;
 
-	public Multicast_DataRestore() {
+	public Multicast_DataRestore() throws IOException{
+		mdr = new MulticastSocket(mdr_port);
+		mdrAddress = InetAddress.getByName(mdr_address);
+		mdr.joinGroup(mdrAddress);
 		mdr_thread = new Thread(this, "mdr_Thread created");
 		mdr_thread.start();
 	}
 
 	public void mdr_communication(int port_number, String adress) throws IOException{
 
-		MulticastSocket mdr = new MulticastSocket(port_number);
-		InetAddress mdrAddress = InetAddress.getByName(adress);
-		mdr.joinGroup(mdrAddress);
-
 		byte[] data= new byte[65536];
 		DatagramPacket packet = new DatagramPacket(data, 65536, mdrAddress, port_number);
 
 		System.out.println("Awaiting to receive message");
 		mdr.receive(packet);
-		System.out.println("Message received");
-		process_message(packet);
-		mdr.leaveGroup(mdrAddress);
-		mdr.close();
-	}
-	
-	public void process_message(DatagramPacket packet) {
-		System.out.println("Processing message");
+		
+		MessageProcessor msg_pro = new MessageProcessor(packet);
 	}
 
 	public void run() {
 		
 		while(true) {
-			System.out.println("mdr Thread is running");
+			//System.out.println("mdr Thread is running");
 			try {
 				mdr_communication(mdr_port, mdr_address);
 				Thread.sleep(1000);
 			}
 			catch(InterruptedException |IOException e) {
+				//System.out.println("mdr - Exception");
 				break;
 			}
-		}		
+		}
+		
+		try {
+			mdr.leaveGroup(mdrAddress);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		mdr.close();
 	}
 }
 
