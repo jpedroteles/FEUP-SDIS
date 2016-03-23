@@ -65,5 +65,10 @@ public class ParseMessage {
 		byte[] ret=parts[1].getBytes();
 		return ret;
 	}
+	
+	public String getFileId(String header) {
+		String[] split = header.split(" ");
+		return split[3];
+	}
 
 }

@@ -32,8 +32,9 @@ public class Multicast_DataBackup implements Runnable {
 
 		System.out.println("MDB - waiting to receive message");
 		mdb.receive(packet);
-		//pm.getHeader(packet, crlf);
-		pm.getContent(packet, crlf);
+		/*String header = pm.getHeader(packet, crlf);
+		byte[] content = pm.getContent(packet, crlf);
+		String fileId = pm.getFileId(header);*/
 		
 		MessageProcessor msg_pro = new MessageProcessor(packet);
 	}
