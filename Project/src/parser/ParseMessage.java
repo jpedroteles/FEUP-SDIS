@@ -50,7 +50,7 @@ public class ParseMessage {
 		String temp=new String(packet.getData(), 0, packet.getLength());
 		String[] parts = temp.split(split);
 		
-		//System.out.println("HEADER: " + parts[0]);
+		System.out.println("HEADER: " + parts[0]);
 		return parts[0];
 	}
 	

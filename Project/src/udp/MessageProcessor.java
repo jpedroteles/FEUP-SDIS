@@ -12,6 +12,7 @@ public class MessageProcessor implements Runnable {
 		pack=packet;
 		msg_thread = new Thread(this, "msg_Thread created");
 		msg_thread.start();
+
 	}
 
 	public void process_message(DatagramPacket packet) {
@@ -20,10 +21,10 @@ public class MessageProcessor implements Runnable {
 	}
 
 	public void run() {
-
+		
 		try {
 			process_message(pack);
-			Thread.sleep(1000);
+			Thread.sleep(10);
 		}
 		catch(InterruptedException e) {
 			System.out.println("Process Message - Exception");

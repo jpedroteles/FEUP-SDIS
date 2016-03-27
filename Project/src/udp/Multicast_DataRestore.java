@@ -10,8 +10,8 @@ import parser.ParseMessage;
 public class Multicast_DataRestore implements Runnable {
 
 	public static Thread mdr_thread;
-	public static int mdr_port=8886;
-	public static String mdr_address = "225.0.0.2";
+	public static int mdr_port=8889;
+	public static String mdr_address = "224.0.0.20";
 	public static MulticastSocket mdr;
 	public static InetAddress mdrAddress;
 	
@@ -21,6 +21,7 @@ public class Multicast_DataRestore implements Runnable {
 		mdr = new MulticastSocket(mdr_port);
 		mdrAddress = InetAddress.getByName(mdr_address);
 		mdr.joinGroup(mdrAddress);
+		mdr.setLoopbackMode(true);
 		mdr_thread = new Thread(this, "mdr_Thread created");
 		mdr_thread.start();
 	}
