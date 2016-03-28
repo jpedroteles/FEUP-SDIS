@@ -50,7 +50,7 @@ public class ParseMessage {
 		String temp=new String(packet.getData(), 0, packet.getLength());
 		String[] parts = temp.split(split);
 		
-		System.out.println("HEADER: " + parts[0]);
+		//System.out.println("HEADER: " + parts[0]);
 		return parts[0];
 	}
 	
@@ -69,6 +69,26 @@ public class ParseMessage {
 	public String getFileId(String header) {
 		String[] split = header.split(" ");
 		return split[3];
+	}
+	
+	public String getMessageType(String header) {
+		String[] split = header.split(" ");
+		return split[0];
+	}
+	
+	public String getChunkNum(String header) {
+		String[] split = header.split(" ");
+		return split[4];
+	}
+	
+	public String getVersion(String header) {
+		String[] split = header.split(" ");
+		return split[1];
+	}
+	
+	public String getSenderId(String header) {
+		String[] split = header.split(" ");
+		return split[2];
 	}
 
 }

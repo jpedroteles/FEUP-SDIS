@@ -106,10 +106,10 @@ public class TCP_Server implements Runnable {
 		String messageType=new String();
 		String fileId=file.getFileId();
 
-		int mc_port=8888;
-		String mc_address = "224.0.0.19";
-		int mdb_port=8890;
-		String mdb_address = "224.0.0.21";
+		int mc_port=8885;
+		String mc_address = "225.0.0.1";
+		int mdb_port=8887;
+		String mdb_address = "225.0.0.3";
 
 		if(type.equals("BACKUP PROTOCOL\n")) {
 			messageType="PUTCHUNK";

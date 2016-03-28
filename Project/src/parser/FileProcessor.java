@@ -62,20 +62,4 @@ public class FileProcessor {
 		}
 		return ret;
 	}
-	
-	public void write_chunks(SingleFile file) throws IOException {
-		
-		for(int i=0;i<file.getChunks().size();i++) {
-
-			String name = "chunks/"+file.getFileId()+"-"+i+".bin";
-			System.out.println(name);
-			Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(name), "utf-8"));
-			writer.write(new String(file.getChunks().get(i).getContent()));
-		}
-	}
-	
-	public void create_chunk_folder() {
-		File dir = new File("chunks");
-		dir.mkdir();
-	}
 }
