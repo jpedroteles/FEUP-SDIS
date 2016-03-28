@@ -24,6 +24,7 @@ public class TCP_Server implements Runnable {
 	private static String version = "1.0";
 	private static char crlf[] = {0xD,0xA};
 	public static Thread thread1;
+	public static String space;
 
 	public TCP_Server(String senderID) {
 		senderId=senderID;
@@ -60,30 +61,30 @@ public class TCP_Server implements Runnable {
 		String[] temp=get_message(received).split(" ");
 		String ret=new String();
 
-		//System.out.println("File name: " + temp[1]);
 		String fileId = fp.get_fileId(temp[1]);
-		//System.out.println("FileId: " + fileId);
 		file.setFileId(fileId);
 		int maxSize = 64*1000;
-		ArrayList<byte[]> chunk_content = fp.divide_in_chunks(temp[1], maxSize);
-		for(int i=0;i<chunk_content.size();i++) {
-			file.addChunk(chunk_content.get(i));
-		}
-		//System.out.println(file.getChunks().size());
-		if(temp.length == 3) {
-			file.setReplicationDegree(Integer.parseInt(temp[2]));
-		}
-		//fp.create_chunk_folder();
-		//fp.write_chunks(file);
-
+		
 		switch(temp[0]){
-		case("BACKUP"):ret="BACKUP PROTOCOL";break;
+		case("BACKUP"):{
+			
+			if(temp.length == 3) {
+				file.setReplicationDegree(Integer.parseInt(temp[2]));
+			}
+			
+			ArrayList<byte[]> chunk_content = fp.divide_in_chunks(temp[1], maxSize);
+			for(int i=0;i<chunk_content.size();i++) {
+				file.addChunk(chunk_content.get(i));
+			}
+			ret="BACKUP PROTOCOL";break;}
 		case("RESTORE"):ret="RESTORE PROTOCOL";break;
 		case("DELETE"):ret="DELETE PROTOCOL";break;
-		case("RECLAIM"):ret="RECLAIM PROTOCOL";break;
+		case("RECLAIM"):{
+			space=temp[1];
+			ret="RECLAIM PROTOCOL";break;}
 		default:ret="ERROR";break;
 		}
-
+		
 		return ret;
 
 	}
@@ -122,26 +123,37 @@ public class TCP_Server implements Runnable {
 			messageType="DELETE";
 		}
 		else if(type.equals("RECLAIM PROTOCOL\n")) {
-			messageType="REMOVED";
+			messageType="RECLAIM";
 		}
 		else {
 			System.out.println("MessageType error: " + type);
 			return;
 		}
-		for(int i=0; i<file.getChunks().size(); i++) {
-			//System.out.println(messageType + " " + version + " " + senderId + " " + fileId + " " + file.getChunks().get(i).getChunkId() + " " + file.getChunks().get(i).getReplicationDegree() + " " + "CRLF");
-			ParseMessage msg = new ParseMessage();
-			byte[] header = msg.header(messageType, version, senderId, fileId, file.getChunks().get(i).getChunkId(), file.getChunks().get(i).getReplicationDegree(), crlf);
-			byte[] message = msg.merge(header, file.getChunks().get(i).getContent());
-			
-			switch(messageType){
+		
+		if(messageType.equals("PUTCHUNK")){
+			for(int i=0; i<file.getChunks().size(); i++) {
+				//System.out.println(messageType + " " + version + " " + senderId + " " + fileId + " " + file.getChunks().get(i).getChunkId() + " " + file.getChunks().get(i).getReplicationDegree() + " " + "CRLF");
+				ParseMessage msg = new ParseMessage();
+				byte[] header = msg.header(messageType, version, senderId, fileId, file.getChunks().get(i).getChunkId(), file.getChunks().get(i).getReplicationDegree(), crlf);
+				byte[] message = msg.merge(header, file.getChunks().get(i).getContent());
+				
+				send.sendRequest(message, mdb_port, mdb_address);
+				//case("GETCHUNK"):send.sendRequest(message, mc_port, mc_address);break;
+				//case("RECLAIM"):send.sendRequest(header, mc_port, mc_address);break;
 
-			case("PUTCHUNK"):send.sendRequest(message, mdb_port, mdb_address);break;
-			case("GETCHUNK"):send.sendRequest(message, mc_port, mc_address);break;
-			case("DELETE"):send.sendRequest(message, mc_port, mc_address);break;
-			case("REMOVED"):send.sendRequest(message, mc_port, mc_address);break;
 			}
-		}	
+		}
+		else if(messageType.equals("DELETE")){
+			ParseMessage msg = new ParseMessage();
+			byte[] header = msg.header(messageType, version, senderId, fileId, 0, 0, crlf);
+			send.sendRequest(header, mc_port, mc_address);
+		}
+		else if(messageType.equals("RECLAIM")){
+			ParseMessage msg = new ParseMessage();
+			System.out.println("SPACE: " + space);
+			byte[] header = (new String(messageType +" " +version+" " + senderId+ " " + space)).getBytes();
+			send.sendRequest(header, mc_port, mc_address);
+		}
 	}
 
 	public static boolean isInteger(String s) {

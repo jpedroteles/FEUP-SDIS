@@ -22,7 +22,7 @@ public class Delete {
 		File[] files = folder.listFiles();
 		
 		for(int i=0; i<files.length;i++){
-			if(pm.getFileId(header).equals(getFileId(files[i]))){
+			if(pm.getId(header).equals(getFileId(files[i]))){
 				String path= "chunks/" + files[i].getName();      
 		        Path p = FileSystems.getDefault().getPath(path);
 		        Files.delete(p);

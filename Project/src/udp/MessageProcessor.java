@@ -1,12 +1,11 @@
 package udp;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
 
 import parser.ParseMessage;
 import protocols.Backup;
 import protocols.Delete;
-import protocols.Utils;
+import protocols.Reclaim;
 
 public class MessageProcessor implements Runnable {
 
@@ -34,6 +33,9 @@ public class MessageProcessor implements Runnable {
 			break;}
 		case("DELETE"): {
 			Delete delete = new Delete(header, content);
+			break;}
+		case("RECLAIM"): {
+			Reclaim reclaim = new Reclaim(header, content, serverId);
 			break;}
 		default: break;
 		}

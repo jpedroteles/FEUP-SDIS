@@ -24,14 +24,14 @@ public class Backup {
 		SendRequest send = new SendRequest();
 		
 		utils.checkFolder();
-		String fileId = pm.getFileId(header) + "-" + pm.getChunkNum(header) + ".bin";
+		String fileId = pm.getId(header) + "-" + pm.getChunkNum(header) + ".bin";
 		if(!utils.checkFile(fileId)) {
 			String name = "chunks/" + fileId;
 			
 			Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(name), "utf-8"));
 			writer.write(new String(content));
 			//O sender Id deve ser o do server que recebeu nao o que enviou
-			String reply = "STORED " + pm.getVersion(header) + " " + ServerId + " " + pm.getFileId(header) + " " + pm.getChunkNum(header) + " " + crlf[0]+crlf[1]+crlf[0]+crlf[1];
+			String reply = "STORED " + pm.getVersion(header) + " " + ServerId + " " + pm.getId(header) + " " + pm.getChunkNum(header) + " " + crlf[0]+crlf[1]+crlf[0]+crlf[1];
 			System.out.println("Reply: " + 0);
 			send.sendRequest(reply.getBytes(), mc_port, mc_address);
 		}
@@ -39,7 +39,4 @@ public class Backup {
 			System.out.println("Reply: " + -1);
 		}
 	}
-	
-	
-
 }
