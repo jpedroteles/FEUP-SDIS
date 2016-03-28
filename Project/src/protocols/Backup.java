@@ -17,7 +17,7 @@ public class Backup {
 	String mc_address = "225.0.0.1";
 	char crlf[] = {0xD,0xA};
 	
-	public Backup(String header, byte[] content) throws IOException{
+	public Backup(String header, byte[] content, String ServerId) throws IOException{
 		
 		ParseMessage pm = new ParseMessage();
 		Utils utils = new Utils();
@@ -30,8 +30,8 @@ public class Backup {
 			
 			Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(name), "utf-8"));
 			writer.write(new String(content));
-			
-			String reply = "STORED " + pm.getVersion(header) + " " + pm.getSenderId(header) + " " + pm.getFileId(header) + " " + pm.getChunkNum(header) + " " + crlf[0]+crlf[1]+crlf[0]+crlf[1];
+			//O sender Id deve ser o do server que recebeu nao o que enviou
+			String reply = "STORED " + pm.getVersion(header) + " " + ServerId + " " + pm.getFileId(header) + " " + pm.getChunkNum(header) + " " + crlf[0]+crlf[1]+crlf[0]+crlf[1];
 			System.out.println("Reply: " + 0);
 			send.sendRequest(reply.getBytes(), mc_port, mc_address);
 		}

@@ -14,10 +14,11 @@ public class Multicast_DataRestore implements Runnable {
 	public static String mdr_address = "225.0.0.2";
 	public static MulticastSocket mdr;
 	public static InetAddress mdrAddress;
-	
+	public String ServerID;
 
 
-	public Multicast_DataRestore() throws IOException{
+	public Multicast_DataRestore(String ServerId) throws IOException{
+		ServerID = ServerId;
 		mdr = new MulticastSocket(mdr_port);
 		mdrAddress = InetAddress.getByName(mdr_address);
 		mdr.joinGroup(mdrAddress);

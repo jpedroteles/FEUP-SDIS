@@ -16,8 +16,10 @@ public class Multicast_DataBackup implements Runnable {
 	public static InetAddress mdbAddress;
 	public ParseMessage pm = new ParseMessage();
 	private static char crlf[] = {0xD,0xA};
+	public String ServerID;
 
-	public Multicast_DataBackup() throws IOException{
+	public Multicast_DataBackup(String ServerId) throws IOException{
+		ServerID = ServerId;
 		mdb = new MulticastSocket(mdb_port);
 		mdbAddress = InetAddress.getByName(mdb_address);
 		mdb.joinGroup(mdbAddress);
@@ -36,7 +38,7 @@ public class Multicast_DataBackup implements Runnable {
 		String header = pm.getHeader(packet, crlf);
 		byte[] content = pm.getContent(packet, crlf);
 		
-		MessageProcessor msg_pro = new MessageProcessor(header, content);
+		MessageProcessor msg_pro = new MessageProcessor(header, content, ServerID);
 	}
 
 	public void run() {

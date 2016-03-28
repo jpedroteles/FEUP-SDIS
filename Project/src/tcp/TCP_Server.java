@@ -20,12 +20,13 @@ public class TCP_Server implements Runnable {
 
 	SingleFile file = new SingleFile();
 	private static int port_number = 8080;
-	private static String senderId="Server";
+	private static String senderId;
 	private static String version = "1.0";
 	private static char crlf[] = {0xD,0xA};
 	public static Thread thread1;
 
-	public TCP_Server() {
+	public TCP_Server(String senderID) {
+		senderId=senderID;
 		thread1 = new Thread(this, "Thread1 created");
 		thread1.start();
 	}

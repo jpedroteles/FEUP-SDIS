@@ -16,8 +16,10 @@ public class Multicast_Control implements Runnable {
 	public static InetAddress mcAddress;
 	public ParseMessage pm = new ParseMessage();
 	private static char crlf[] = {0xD,0xA};
+	public String ServerID;
 
-	public Multicast_Control() throws IOException{
+	public Multicast_Control(String ServerId) throws IOException{
+		ServerID = ServerId;
 		mc = new MulticastSocket(mc_port);
 		mcAddress = InetAddress.getByName(mc_address);
 		mc.joinGroup(mcAddress);
@@ -35,7 +37,7 @@ public class Multicast_Control implements Runnable {
 		String header = pm.getHeader(packet, crlf);
 		byte[] content = pm.getContent(packet, crlf);
 		
-		MessageProcessor msg_pro = new MessageProcessor(header, content);
+		MessageProcessor msg_pro = new MessageProcessor(header, content, ServerID);
 	}
 
 	public void run() {

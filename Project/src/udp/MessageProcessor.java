@@ -14,8 +14,10 @@ public class MessageProcessor implements Runnable {
 	public String header;
 	public byte[] content;
 	public ParseMessage pm = new ParseMessage();
+	public String serverId;
 
-	public MessageProcessor(String h, byte[] c) {
+	public MessageProcessor(String h, byte[] c, String ServerID) {
+		serverId=ServerID;
 		header = h;
 		content = c;
 		msg_thread = new Thread(this, "msg_Thread created");
@@ -28,7 +30,7 @@ public class MessageProcessor implements Runnable {
 
 		switch(messageType){
 		case("PUTCHUNK"): {
-			Backup backup = new Backup(header, content);
+			Backup backup = new Backup(header, content, serverId);
 			break;}
 		case("DELETE"): {
 			Delete delete = new Delete(header, content);
