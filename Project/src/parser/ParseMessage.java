@@ -60,9 +60,11 @@ public class ParseMessage {
 		String temp=new String(packet.getData(), 0, packet.getLength());
 		String[] parts = temp.split(split);
 		
-		//System.out.println("CONTENT: " + parts[1]);
 		
-		byte[] ret=parts[1].getBytes();
+		byte[] ret = null;
+		if(parts.length >= 2){
+			ret=parts[1].getBytes();
+		}
 		return ret;
 	}
 	

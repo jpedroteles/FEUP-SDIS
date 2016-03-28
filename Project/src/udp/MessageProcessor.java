@@ -35,7 +35,7 @@ public class MessageProcessor implements Runnable {
 		case("DELETE"): {
 			Delete delete = new Delete(header, content);
 			break;}
-		default: System.out.println("---> NOT Processing message"); break;
+		default: break;
 		}
 	}
 
