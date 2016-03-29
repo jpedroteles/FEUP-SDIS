@@ -6,6 +6,7 @@ import parser.ParseMessage;
 import protocols.Backup;
 import protocols.Delete;
 import protocols.Reclaim;
+import protocols.Restore;
 
 public class MessageProcessor implements Runnable {
 
@@ -26,6 +27,7 @@ public class MessageProcessor implements Runnable {
 	public void process_message() throws IOException {
 		
 		String messageType = pm.getMessageType(header);
+		//System.out.println(messageType);
 
 		switch(messageType){
 		case("PUTCHUNK"): {
@@ -36,6 +38,9 @@ public class MessageProcessor implements Runnable {
 			break;}
 		case("REMOVED"): {
 			Reclaim reclaim = new Reclaim(header, content, serverId);
+			break;}
+		case("GETCHUNK"): {
+			Restore restore = new Restore(header, serverId);
 			break;}
 		default: break;
 		}

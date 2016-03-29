@@ -116,7 +116,7 @@ public class FileProcessor {
 	
 	public String getFileNum(File files){
 		String[] split=files.getName().split("-");
-		System.out.println(split[1]);
+		//System.out.println(split[1]);
 		String[] ret=split[1].split(".bin");
 		return ret[0];
 	}

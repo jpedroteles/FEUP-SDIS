@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
  
 
+
 import parser.ParseMessage;
 import udp.SendRequest;
 import protocols.Utils;
@@ -34,10 +35,12 @@ public class Restore {
  
         for(int i=0; i<files.length;i++){
             if(pm.getId(header).equals(getFileId(files[i])) && pm.getChunkNum(header).equals(getChunkNum(files[i]))){
-                Path path = Paths.get("chunk/"+pm.getId(header)+"-"+pm.getChunkNum(header));
+            	System.out.println("RESTORED1");
+            	Path path = Paths.get("chunks/"+pm.getId(header)+"-"+pm.getChunkNum(header)+".bin");
                 temp = Files.readAllBytes(path);
                 data=pm.merge(data,temp);
                 send.sendRequest(data, mdr_port, mdr_address);
+                System.out.println("RESTORED2");
                 hist.add("-", pm.getId(header), pm.getChunkNum(header), serverId, "CHUNK", "SENT");
             }
         }
@@ -51,6 +54,7 @@ public class Restore {
  
     public String getChunkNum(File files){
         String[] split=files.getName().split("-");
-        return split[1];
+        String[] ret=split[1].split(".bin");
+		return ret[0];
     }
 }

@@ -179,13 +179,12 @@ public class TCP_Server implements Runnable {
 
 		}
 		else if(messageType.equals("GETCHUNK")){
-
-			for(int i=0; i<file.getChunks().size(); i++) {
-					
+			FileProcessor fp = new FileProcessor();
+			for(int i=0; i<fp.getChunkNums().size(); i++) {
 				ParseMessage msg = new ParseMessage();
-				byte[] header = msg.header(messageType, version, senderId, fileId,  file.getChunks().get(i).getChunkId(), 0, crlf);
+				byte[] header = msg.header(messageType, version, senderId, fp.getChunkNames().get(i),  Integer.parseInt(fp.getChunkNums().get(i)), 0, crlf);
 				send.sendRequest(header, mc_port, mc_address);	
-				history.add(filename, fileId, Integer.toString(file.getChunks().get(i).getChunkId()), senderId, messageType, "SENT");
+				history.add(filename, fp.getChunkNames().get(i), fp.getChunkNums().get(i), senderId, messageType, "SENT");
 			}
 		}
 	}
