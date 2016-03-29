@@ -11,11 +11,12 @@ import udp.SendRequest;
 
 public class Delete {
 
-	public Delete(String header, byte[]content) throws IOException{
+	public Delete(String header, byte[]content, String serverId) throws IOException{
 		
 		ParseMessage pm = new ParseMessage();
 		Utils utils = new Utils();
 		SendRequest send = new SendRequest();
+		History hist = new History();
 		
 		utils.checkFolder();
 		File folder = new File("chunks");
@@ -27,6 +28,8 @@ public class Delete {
 		        Path p = FileSystems.getDefault().getPath(path);
 		        Files.delete(p);
 				System.out.println("Chunk deleted");
+
+				hist.add("-", pm.getId(header), Integer.toString(i), serverId, "-", "SENT");
 			}
 		}
 	}

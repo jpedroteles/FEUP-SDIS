@@ -1,6 +1,9 @@
 package parser;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.*;
 import java.util.ArrayList;
 
@@ -61,5 +64,60 @@ public class FileProcessor {
 			ret.add(s);
 		}
 		return ret;
+	}
+
+	public ArrayList<byte[]> getMyChunks() throws IOException{
+		ArrayList<byte[]> ret = new ArrayList<byte[]>();
+
+		File folder = new File("chunks");
+		File[] files = folder.listFiles();
+
+		for(int i=0; i<files.length; i++){
+			
+			Path path = Paths.get(files[i].getPath());
+			//System.out.println(path);
+			ret.add(Files.readAllBytes(path));
+		}
+		return ret;
+	}
+	
+	public ArrayList<String> getChunkNames() throws IOException{
+		ArrayList<String> ret = new ArrayList<String>();
+		
+		File folder = new File("chunks");
+		File[] files = folder.listFiles();
+		//System.out.println("LENGTH: " + files.length);
+		for(int i=0; i<files.length; i++){
+			
+			//System.out.println("NAME:" + getFileId(files[i]));
+			ret.add(getFileId(files[i]));
+		}
+		return ret;
+	}
+	
+	public String getFileId(File files){
+		String[] split=files.getName().split("-");
+		return split[0];
+	}
+	
+	public ArrayList<String> getChunkNums() throws IOException{
+		ArrayList<String> ret = new ArrayList<String>();
+		
+		File folder = new File("chunks");
+		File[] files = folder.listFiles();
+		//System.out.println("LENGTH: " + files.length);
+		for(int i=0; i<files.length; i++){
+			
+			//System.out.println("NAME:" + getFileId(files[i]));
+			ret.add(getFileNum(files[i]));
+		}
+		return ret;
+	}
+	
+	public String getFileNum(File files){
+		String[] split=files.getName().split("-");
+		System.out.println(split[1]);
+		String[] ret=split[1].split(".bin");
+		return ret[0];
 	}
 }

@@ -32,9 +32,9 @@ public class MessageProcessor implements Runnable {
 			Backup backup = new Backup(header, content, serverId);
 			break;}
 		case("DELETE"): {
-			Delete delete = new Delete(header, content);
+			Delete delete = new Delete(header, content, serverId);
 			break;}
-		case("RECLAIM"): {
+		case("REMOVED"): {
 			Reclaim reclaim = new Reclaim(header, content, serverId);
 			break;}
 		default: break;
@@ -48,7 +48,6 @@ public class MessageProcessor implements Runnable {
 			Thread.sleep(1000);
 		}
 		catch(InterruptedException | IOException e) {
-			System.out.println("Process Message - Exception");
 		}	
 	}
 }

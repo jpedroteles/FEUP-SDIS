@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 import parser.ParseMessage;
+import protocols.History;
 
 public class Multicast_DataRestore implements Runnable {
 
@@ -15,6 +16,9 @@ public class Multicast_DataRestore implements Runnable {
 	public static MulticastSocket mdr;
 	public static InetAddress mdrAddress;
 	public String ServerID;
+	public ParseMessage pm = new ParseMessage();
+	private static char crlf[] = {0xD,0xA};
+	public History hist = new History();
 
 
 	public Multicast_DataRestore(String ServerId) throws IOException{
@@ -31,9 +35,15 @@ public class Multicast_DataRestore implements Runnable {
 		byte[] data= new byte[65536];
 		DatagramPacket packet = new DatagramPacket(data, 65536);
 
-		//System.out.println("MDR - waiting to receive message");
+		
 		mdr.receive(packet);
-		//MessageProcessor msg_pro = new MessageProcessor(packet);
+		String header = pm.getHeader(packet, crlf);
+		byte[] content = pm.getContent(packet, crlf);
+		
+		System.out.println("RESTORED");
+		hist.add("-", pm.getId(header), pm.getChunkNum(header), pm.getSenderId(header), pm.getMessageType(header), "RECEIVED");
+
+		MessageProcessor msg_pro = new MessageProcessor(header, content, ServerID);
 	}
 
 	public void run() {

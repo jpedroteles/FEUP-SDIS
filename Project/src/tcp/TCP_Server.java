@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import parser.FileProcessor;
 import parser.ParseMessage;
 import parser.SingleFile;
+import protocols.History;
 import udp.Multicast_DataBackup;
 import udp.SendRequest;
 
@@ -24,7 +25,9 @@ public class TCP_Server implements Runnable {
 	private static String version = "1.0";
 	private static char crlf[] = {0xD,0xA};
 	public static Thread thread1;
-	public static String space;
+	public static int space=0;
+	public static History history = new History();
+	public static String filename;
 
 	public TCP_Server(String senderID) {
 		senderId=senderID;
@@ -61,17 +64,18 @@ public class TCP_Server implements Runnable {
 		String[] temp=get_message(received).split(" ");
 		String ret=new String();
 
+		filename=temp[1];
 		String fileId = fp.get_fileId(temp[1]);
 		file.setFileId(fileId);
 		int maxSize = 64*1000;
-		
+
 		switch(temp[0]){
 		case("BACKUP"):{
-			
+
 			if(temp.length == 3) {
 				file.setReplicationDegree(Integer.parseInt(temp[2]));
 			}
-			
+
 			ArrayList<byte[]> chunk_content = fp.divide_in_chunks(temp[1], maxSize);
 			for(int i=0;i<chunk_content.size();i++) {
 				file.addChunk(chunk_content.get(i));
@@ -80,11 +84,17 @@ public class TCP_Server implements Runnable {
 		case("RESTORE"):ret="RESTORE PROTOCOL";break;
 		case("DELETE"):ret="DELETE PROTOCOL";break;
 		case("RECLAIM"):{
-			space=temp[1];
+			space=Integer.parseInt(temp[1]);
+			//System.out.println("CHUNKS");
+			ArrayList<byte[]> chunk_content = fp.getMyChunks();
+			for(int i=0;i<chunk_content.size();i++) {
+				file.addChunk(chunk_content.get(i));
+			}
+			System.out.println("CHUNKS");
 			ret="RECLAIM PROTOCOL";break;}
 		default:ret="ERROR";break;
 		}
-		
+
 		return ret;
 
 	}
@@ -107,7 +117,7 @@ public class TCP_Server implements Runnable {
 		SendRequest send = new SendRequest();
 		String messageType=new String();
 		String fileId=file.getFileId();
-
+		System.out.println(messageType);
 		int mc_port=8885;
 		String mc_address = "225.0.0.1";
 		int mdb_port=8887;
@@ -129,30 +139,54 @@ public class TCP_Server implements Runnable {
 			System.out.println("MessageType error: " + type);
 			return;
 		}
-		
+
 		if(messageType.equals("PUTCHUNK")){
 			for(int i=0; i<file.getChunks().size(); i++) {
-				//System.out.println(messageType + " " + version + " " + senderId + " " + fileId + " " + file.getChunks().get(i).getChunkId() + " " + file.getChunks().get(i).getReplicationDegree() + " " + "CRLF");
+
 				ParseMessage msg = new ParseMessage();
 				byte[] header = msg.header(messageType, version, senderId, fileId, file.getChunks().get(i).getChunkId(), file.getChunks().get(i).getReplicationDegree(), crlf);
 				byte[] message = msg.merge(header, file.getChunks().get(i).getContent());
-				
-				send.sendRequest(message, mdb_port, mdb_address);
-				//case("GETCHUNK"):send.sendRequest(message, mc_port, mc_address);break;
-				//case("RECLAIM"):send.sendRequest(header, mc_port, mc_address);break;
 
+				send.sendRequest(message, mdb_port, mdb_address);
+				history.add(filename, fileId, Integer.toString(file.getChunks().get(i).getChunkId()), senderId, messageType, "SENT");
 			}
 		}
 		else if(messageType.equals("DELETE")){
 			ParseMessage msg = new ParseMessage();
 			byte[] header = msg.header(messageType, version, senderId, fileId, 0, 0, crlf);
 			send.sendRequest(header, mc_port, mc_address);
+			history.add(filename, fileId, "-", senderId, messageType, "SENT");
+
 		}
 		else if(messageType.equals("RECLAIM")){
 			ParseMessage msg = new ParseMessage();
-			System.out.println("SPACE: " + space);
-			byte[] header = (new String(messageType +" " +version+" " + senderId+ " " + space)).getBytes();
-			send.sendRequest(header, mc_port, mc_address);
+			FileProcessor fp = new FileProcessor();
+			
+			int i=0;
+			System.out.println("INITIAL SPACE: " + space);
+			while(space > 0){
+				fileId=fp.getChunkNames().get(i);
+				System.out.println("SPACE: " + space);
+				String reply = "REMOVED " + version + " " + senderId + " " + fileId + " " + fp.getChunkNums().get(0) + " " + crlf[0]+crlf[1]+crlf[0]+crlf[1];
+
+				byte[] header = reply.getBytes();
+				send.sendRequest(header, mc_port, mc_address);
+				space-=file.getChunks().get(i).getContent().length;
+				i++;
+			}
+			System.out.println("FINAL SPACE: " + space);
+			history.add("-", "-", "-", senderId, messageType, "SENT");
+
+		}
+		else if(messageType.equals("GETCHUNK")){
+
+			for(int i=0; i<file.getChunks().size(); i++) {
+					
+				ParseMessage msg = new ParseMessage();
+				byte[] header = msg.header(messageType, version, senderId, fileId,  file.getChunks().get(i).getChunkId(), 0, crlf);
+				send.sendRequest(header, mc_port, mc_address);	
+				history.add(filename, fileId, Integer.toString(file.getChunks().get(i).getChunkId()), senderId, messageType, "SENT");
+			}
 		}
 	}
 

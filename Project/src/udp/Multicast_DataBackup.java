@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 import parser.ParseMessage;
+import protocols.History;
 
 public class Multicast_DataBackup implements Runnable {
 
@@ -17,6 +18,7 @@ public class Multicast_DataBackup implements Runnable {
 	public ParseMessage pm = new ParseMessage();
 	private static char crlf[] = {0xD,0xA};
 	public String ServerID;
+	public History hist = new History();
 
 	public Multicast_DataBackup(String ServerId) throws IOException{
 		ServerID = ServerId;
@@ -37,7 +39,8 @@ public class Multicast_DataBackup implements Runnable {
 		mdb.receive(packet);
 		String header = pm.getHeader(packet, crlf);
 		byte[] content = pm.getContent(packet, crlf);
-		
+		hist.add("-", pm.getId(header), pm.getChunkNum(header), pm.getSenderId(header), pm.getMessageType(header), "RECEIVED");
+
 		MessageProcessor msg_pro = new MessageProcessor(header, content, ServerID);
 	}
 
