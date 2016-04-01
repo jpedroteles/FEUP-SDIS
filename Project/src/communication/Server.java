@@ -2,6 +2,7 @@ package communication;
 
 import java.io.IOException;
 
+import parser.ParseLog;
 import tcp.TCP_Server;
 import udp.*;
 

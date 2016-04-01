@@ -120,4 +120,59 @@ public class FileProcessor {
 		String[] ret=split[1].split(".bin");
 		return ret[0];
 	}
+	
+	public String getBestCandidate(ArrayList<String> chunkNames) throws IOException{
+		
+		ArrayList<Integer> repDegrees = new ArrayList<Integer>();
+		ParseLog pl = new ParseLog();
+		
+		for(int i=0;i<chunkNames.size();i++){
+			repDegrees.add(pl.countRepDegree(chunkNames.get(i), Integer.toString(i)));
+		}
+		int index = getMax(repDegrees);
+		return chunkNames.get(index);		
+	}
+	
+	public int getBestIndex(ArrayList<String> chunkNames) throws IOException{
+		ArrayList<Integer> repDegrees = new ArrayList<Integer>();
+		ParseLog pl = new ParseLog();
+		
+		for(int i=0;i<chunkNames.size();i++){
+			repDegrees.add(pl.countRepDegree(chunkNames.get(i), Integer.toString(i)));
+		}
+		return getMax(repDegrees);
+		
+	}
+	
+	public int getNum(int index) throws IOException{
+		return Integer.parseInt(getChunkNums().get(index));
+	}
+	
+	public long getFileSize(String filename){
+		long ret=0;
+		
+		File folder = new File("chunks");
+		File[] files = folder.listFiles();
+		
+		for(int i=0; i<files.length; i++){
+			
+			if(files[i].getName().equals(filename)){
+				System.out.println("AQUI");
+				ret=files[i].length();
+			}
+		}
+		return ret;
+	}
+	
+	public int getMax(ArrayList<Integer> list){
+		int ret=0;
+		
+		for(int i=0;i<list.size();i++){
+			if(list.get(i) > ret){
+				ret=i;
+			}
+		}
+		
+		return ret;
+	}
 }

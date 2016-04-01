@@ -85,7 +85,6 @@ public class TCP_Server implements Runnable {
 		case("DELETE"):ret="DELETE PROTOCOL";break;
 		case("RECLAIM"):{
 			space=Integer.parseInt(temp[1]);
-			//System.out.println("CHUNKS");
 			ArrayList<byte[]> chunk_content = fp.getMyChunks();
 			for(int i=0;i<chunk_content.size();i++) {
 				file.addChunk(chunk_content.get(i));
@@ -162,17 +161,17 @@ public class TCP_Server implements Runnable {
 			ParseMessage msg = new ParseMessage();
 			FileProcessor fp = new FileProcessor();
 			
-			int i=0;
 			System.out.println("INITIAL SPACE: " + space);
 			while(space > 0){
-				fileId=fp.getChunkNames().get(i);
+				fileId=fp.getBestCandidate(fp.getChunkNames());
 				System.out.println("SPACE: " + space);
-				String reply = "REMOVED " + version + " " + senderId + " " + fileId + " " + fp.getChunkNums().get(0) + " " + crlf[0]+crlf[1]+crlf[0]+crlf[1];
+				String reply = "REMOVED " + version + " " + senderId + " " + fileId + " " + fp.getNum(fp.getBestIndex(fp.getChunkNames())) + " " + crlf[0]+crlf[1]+crlf[0]+crlf[1];
 
 				byte[] header = reply.getBytes();
+				System.out.println("REPLY: " + reply);
+				space-=fp.getFileSize(fileId+"-"+fp.getNum(fp.getBestIndex(fp.getChunkNames()))+".bin");
 				send.sendRequest(header, mc_port, mc_address);
-				space-=file.getChunks().get(i).getContent().length;
-				i++;
+	
 			}
 			System.out.println("FINAL SPACE: " + space);
 			history.add("-", "-", "-", senderId, messageType, "SENT");
