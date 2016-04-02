@@ -2,23 +2,31 @@ package protocols;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
  
 
 
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Vector;
+
 import parser.ParseMessage;
 import udp.SendRequest;
 import protocols.Utils;
 
 public class Restore {
-    int mdr_port=8886;
-    String mdr_address = "225.0.0.2";
+    int mdr_port;
+    String mdr_address;
     private static char crlf[] = {0xD,0xA};
  
-    public Restore (String header, String serverId) throws IOException {
- 
+    public Restore (String header, String serverId, int pt, String a) throws IOException, InterruptedException {
+    	mdr_port=pt;
+    	mdr_address=a;
         ParseMessage pm = new ParseMessage();
         Utils utils = new Utils();
         SendRequest send = new SendRequest();
@@ -32,15 +40,18 @@ public class Restore {
  
         File folder = new File("chunks");
         File[] files = folder.listFiles();
- 
+        Arrays.sort(files);
+        
         for(int i=0; i<files.length;i++){
+        	//System.out.println(pm.getId(header)+"=="+getFileId(files[i]));
+        	//System.out.println(pm.getChunkNum(header)+"=="+getChunkNum(files[i]));
             if(pm.getId(header).equals(getFileId(files[i])) && pm.getChunkNum(header).equals(getChunkNum(files[i]))){
-            	System.out.println("RESTORED1");
+            	
             	Path path = Paths.get("chunks/"+pm.getId(header)+"-"+pm.getChunkNum(header)+".bin");
                 temp = Files.readAllBytes(path);
-                data=pm.merge(data,temp);
-                send.sendRequest(data, mdr_port, mdr_address);
-                System.out.println("RESTORED2");
+                byte[] newData=pm.merge(data,temp);
+                System.out.println("RESTORED SENT: " + newData.length);
+                send.sendRequest(newData, mdr_port, mdr_address, serverId);
                 hist.add("-", pm.getId(header), pm.getChunkNum(header), serverId, "CHUNK", "SENT");
             }
         }
@@ -57,4 +68,5 @@ public class Restore {
         String[] ret=split[1].split(".bin");
 		return ret[0];
     }
+
 }

@@ -56,16 +56,9 @@ public class ParseMessage {
 	
 	public byte[] getContent(DatagramPacket packet, char[] crlf) {
 		
-		String split = "" + crlf[0] + crlf[1] + crlf[0] + crlf[1];
-		String temp=new String(packet.getData(), 0, packet.getLength());
-		String[] parts = temp.split(split);
+		byte[] temp=packet.getData();
 		
-		
-		byte[] ret = null;
-		if(parts.length >= 2){
-			ret=parts[1].getBytes();
-		}
-		return ret;
+		return content(temp, crlf);
 	}
 	
 	public String getId(String header) {
@@ -91,6 +84,25 @@ public class ParseMessage {
 	public String getSenderId(String header) {
 		String[] split = header.split(" ");
 		return split[2];
+	}
+	
+	public byte[] content(byte[] message, char[] crlf){
+		boolean flag=false;
+		int j=0;
+		byte[] ret=null;
+		for(int i=0;i<message.length-4;i++){
+			if(message[i]==(new String(crlf).getBytes()[0]) && message[i+1]==(new String(crlf).getBytes()[1]) && message[i+2]==(new String(crlf).getBytes()[0]) && message[i+3]==(new String(crlf).getBytes()[1]) && flag==false){
+				flag=true;
+				ret = new byte[message.length-i];
+				i+=4;
+			}
+			
+			if(flag){
+				ret[j]=message[i];
+				j++;
+			}
+		}
+		return ret;
 	}
 
 }

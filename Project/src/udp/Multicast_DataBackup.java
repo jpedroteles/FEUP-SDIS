@@ -1,6 +1,7 @@
 package udp;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
@@ -11,8 +12,12 @@ import protocols.History;
 public class Multicast_DataBackup implements Runnable {
 
 	public static Thread mdb_thread;
-	public static int mdb_port=8887;
-	public static String mdb_address = "225.0.0.3";
+	/*public static int mdb_port=8887;
+	public static String mdb_address = "225.0.0.3";*/
+	public static int mdb_port;
+	public static String mdb_address;
+	public static int mc_port;
+	public static String mc_address;
 	public static MulticastSocket mdb;
 	public static InetAddress mdbAddress;
 	public ParseMessage pm = new ParseMessage();
@@ -20,7 +25,11 @@ public class Multicast_DataBackup implements Runnable {
 	public String ServerID;
 	public History hist = new History();
 
-	public Multicast_DataBackup(String ServerId) throws IOException{
+	public Multicast_DataBackup(String ServerId, String mdb_a, int mdb_p, String mc_a, int mc_p) throws IOException{
+		mdb_port=mdb_p;
+		mdb_address=mdb_a;
+		mc_port=mc_p;
+		mc_address=mc_a;
 		ServerID = ServerId;
 		mdb = new MulticastSocket(mdb_port);
 		mdbAddress = InetAddress.getByName(mdb_address);
@@ -39,9 +48,11 @@ public class Multicast_DataBackup implements Runnable {
 		mdb.receive(packet);
 		String header = pm.getHeader(packet, crlf);
 		byte[] content = pm.getContent(packet, crlf);
+		//System.out.println("MDB");
 		hist.add("-", pm.getId(header), pm.getChunkNum(header), pm.getSenderId(header), pm.getMessageType(header), "RECEIVED");
-
-		MessageProcessor msg_pro = new MessageProcessor(header, content, ServerID);
+		
+		MessageProcessor msg_pro = new MessageProcessor(header, content, ServerID, mc_port, mc_address);
+		
 	}
 
 	public void run() {

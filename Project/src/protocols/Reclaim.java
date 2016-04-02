@@ -11,12 +11,13 @@ import udp.SendRequest;
 
 public class Reclaim {
 
-	int mc_port=8885;
-	String mc_address = "225.0.0.1";
+	int mc_port;
+	String mc_address;
 	char crlf[] = {0xD,0xA};
 
-	public Reclaim(String header, byte[] content, String serverId) throws IOException{
-
+	public Reclaim(String header, byte[] content, String serverId, int pt, String a) throws IOException{
+		mc_port=pt;
+		mc_address=a;
 		ParseMessage pm = new ParseMessage();
 		Utils utils = new Utils();
 		SendRequest send = new SendRequest();

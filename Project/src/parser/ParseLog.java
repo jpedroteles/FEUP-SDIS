@@ -47,33 +47,7 @@ public class ParseLog {
 		return ret;
 	}
 
-	public boolean chunkExists(String hash, String chunkNum, String serverId) throws IOException{
-
-		BufferedReader br = new BufferedReader(new FileReader("logs/history.txt"));
-		boolean flag=false;
-		String line;
-		while ((line = br.readLine()) != null) {
-			String fileId = getFileId(line);
-			String chunk = getChunkNum(line);
-
-			if(!flag){
-				if(fileId.equals(hash) && chunk.equals(chunkNum) && getMessageType(line).equals("STORED") && serverId.equals(getServerId(line))){
-					flag=true;
-				}
-			}
-			else {
-				if(fileId.equals(hash) && getMessageType(line).equals("DELETE") && serverId.equals(getServerId(line))){
-					flag=false;
-				}
-				else if(fileId.equals(hash) && chunk.equals(chunkNum) && getMessageType(line).equals("REMOVED") && serverId.equals(getServerId(line))){
-					flag=false;
-				}
-			}			
-		}
-		return flag;
-	}
-
-	public int countRepDegree(String hash, String chunkNum) throws IOException{
+	public int countRepDegree(String hash, String chunkNum, String serverId) throws IOException{
 		int ret=0;
 		ArrayList<String> serverIds = new ArrayList<String>();
 
@@ -85,15 +59,15 @@ public class ParseLog {
 
 			if(!serverIds.contains(getServerId(line))){
 
-				if(fileId.equals(hash) && chunk.equals(chunkNum) && getMessageType(line).equals("STORED")){
+				if(fileId.equals(hash) && chunk.equals(chunkNum) && getMessageType(line).equals("STORED") && serverId.equals(getServerId(line))){
 					ret++;
 					serverIds.add(getServerId(line));
 				}
-				else if(fileId.equals(hash) && getMessageType(line).equals("DELETE")){
+				else if(fileId.equals(hash) && getMessageType(line).equals("DELETE") && serverId.equals(getServerId(line))){
 					ret--;
 					serverIds.remove(getServerId(line));
 				}
-				else if(fileId.equals(hash) && chunk.equals(chunkNum) && getMessageType(line).equals("REMOVED")){
+				else if(fileId.equals(hash) && chunk.equals(chunkNum) && getMessageType(line).equals("REMOVED") && serverId.equals(getServerId(line))){
 					ret--;
 					serverIds.remove(getServerId(line));
 				}
@@ -104,6 +78,24 @@ public class ParseLog {
 			ret=0;
 		}
 		System.out.println("CURRENT REPLICATION DEGREE: " + ret);
+		return ret;
+	}
+
+	public String getFile(String hash) throws IOException{
+
+		String ret = null;
+		ArrayList<String> serverIds = new ArrayList<String>();
+
+		BufferedReader br = new BufferedReader(new FileReader("logs/history.txt"));
+		String line;
+		while((line = br.readLine()) != null){
+			String fileId = getFileId(line);
+
+			if(fileId.equals(hash) && !getFilename(line).equals("-")){
+				ret=getFilename(line);
+				break;
+			}
+		}
 		return ret;
 	}
 }

@@ -2,7 +2,7 @@ package parser;
 
 public class Chunk {
 	private int chunkId;
-	private byte[] content;
+	private byte[] content = new byte[64000];
 	private int replicationDegree = 0;
 	
 	public int getChunkId() {

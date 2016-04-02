@@ -15,7 +15,6 @@ public class Delete {
 		
 		ParseMessage pm = new ParseMessage();
 		Utils utils = new Utils();
-		SendRequest send = new SendRequest();
 		History hist = new History();
 		
 		utils.checkFolder();

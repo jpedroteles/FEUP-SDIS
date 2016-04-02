@@ -6,13 +6,23 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
 
 public class FileProcessor {
+	
+	public static String serverId;
+	
+	public FileProcessor(String s){
+		serverId=s;
+	}
 
 	public String get_fileId(String filename) throws CloneNotSupportedException, NoSuchAlgorithmException, UnsupportedEncodingException {
-
+		
+		File file = new File(filename);
+		filename+=file.lastModified();
+		
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 
 		md.update(filename.getBytes("UTF-8"));
@@ -25,8 +35,8 @@ public class FileProcessor {
 
 		File inputFile = new File(filename);
 		FileInputStream inputStream;
-		int fileSize = (int) inputFile.length();
-		//System.out.println("File Size: " + fileSize);
+		long fileSize = inputFile.length();
+				
 		int read=0, readLength = maxSize;
 		byte[] chunkPart;
 		boolean addLastChunk=false;
@@ -41,16 +51,18 @@ public class FileProcessor {
 			while(fileSize > 0){
 
 				if(fileSize <= maxSize){
-					readLength = fileSize;
+					readLength = (int)fileSize;
 				}
 				chunkPart = new byte[readLength];
 				read = inputStream.read(chunkPart,0,readLength);
+				//FileOutputStream out = new FileOutputStream(readLength+""+fileSize);
+				//out.write(chunkPart);
 				fileSize -= read;
 
 				assert (read == chunkPart.length);
 
 				ret.add(chunkPart);
-				//System.out.println("New chunk added");
+								
 				chunkPart=null;
 			}
 			inputStream.close();
@@ -127,7 +139,7 @@ public class FileProcessor {
 		ParseLog pl = new ParseLog();
 		
 		for(int i=0;i<chunkNames.size();i++){
-			repDegrees.add(pl.countRepDegree(chunkNames.get(i), Integer.toString(i)));
+			repDegrees.add(pl.countRepDegree(chunkNames.get(i), Integer.toString(i), serverId));
 		}
 		int index = getMax(repDegrees);
 		return chunkNames.get(index);		
@@ -138,7 +150,7 @@ public class FileProcessor {
 		ParseLog pl = new ParseLog();
 		
 		for(int i=0;i<chunkNames.size();i++){
-			repDegrees.add(pl.countRepDegree(chunkNames.get(i), Integer.toString(i)));
+			repDegrees.add(pl.countRepDegree(chunkNames.get(i), Integer.toString(i), serverId));
 		}
 		return getMax(repDegrees);
 		
@@ -175,4 +187,16 @@ public class FileProcessor {
 		
 		return ret;
 	}
+	
+	 
+    public int[] getPos(ArrayList<String> files){
+    	int[] chunkNums = new int[files.size()];
+    	
+    	for(int i=0;i<files.size();i++){
+    		chunkNums[i]=Integer.parseInt(files.get(i));
+    	}
+    	
+    	Arrays.sort(chunkNums);  
+    	return chunkNums;
+    }
 }

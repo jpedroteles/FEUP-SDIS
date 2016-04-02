@@ -2,15 +2,19 @@ package tcp;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import parser.FileProcessor;
+import parser.ParseLog;
 import parser.ParseMessage;
 import parser.SingleFile;
 import protocols.History;
@@ -20,7 +24,7 @@ import udp.SendRequest;
 public class TCP_Server implements Runnable {
 
 	SingleFile file = new SingleFile();
-	private static int port_number = 8080;
+	private static int port_number;
 	private static String senderId;
 	private static String version = "1.0";
 	private static char crlf[] = {0xD,0xA};
@@ -28,8 +32,21 @@ public class TCP_Server implements Runnable {
 	public static int space=0;
 	public static History history = new History();
 	public static String filename;
+	/*public static int mc_port=8885;
+	public static String mc_address = "225.0.0.1";
+	public static int mdb_port=8887;
+	public static String mdb_address = "225.0.0.3";*/
+	public static int mc_port;
+	public static String mc_address;
+	public static int mdb_port;
+	public static String mdb_address;
 
-	public TCP_Server(String senderID) {
+	public TCP_Server(String senderID, String mc_a, int mc_p, String mdb_a, int mdb_p, int port) {
+		port_number=port;
+		mc_port=mc_p;
+		mc_address=mc_a;
+		mdb_port=mdb_p;
+		mdb_address=mdb_a;
 		senderId=senderID;
 		thread1 = new Thread(this, "Thread1 created");
 		thread1.start();
@@ -60,7 +77,7 @@ public class TCP_Server implements Runnable {
 
 	public String processor(String received) throws NoSuchAlgorithmException, CloneNotSupportedException, IOException {
 
-		FileProcessor fp = new FileProcessor();
+		FileProcessor fp = new FileProcessor(senderId);
 		String[] temp=get_message(received).split(" ");
 		String ret=new String();
 
@@ -72,7 +89,10 @@ public class TCP_Server implements Runnable {
 		switch(temp[0]){
 		case("BACKUP"):{
 
-			if(temp.length == 3) {
+			if(temp.length == 2) {
+				file.setReplicationDegree(1);
+			}
+			else{
 				file.setReplicationDegree(Integer.parseInt(temp[2]));
 			}
 
@@ -80,6 +100,7 @@ public class TCP_Server implements Runnable {
 			for(int i=0;i<chunk_content.size();i++) {
 				file.addChunk(chunk_content.get(i));
 			}
+			System.out.println("NUM CHUNKS: " + file.getChunks().size());
 			ret="BACKUP PROTOCOL";break;}
 		case("RESTORE"):ret="RESTORE PROTOCOL";break;
 		case("DELETE"):ret="DELETE PROTOCOL";break;
@@ -111,22 +132,20 @@ public class TCP_Server implements Runnable {
 		return ret;
 	}
 
-	public static void send_message(String type, SingleFile file) throws IOException {
+	public static void send_message(String type, SingleFile file) throws IOException, InterruptedException {
 
 		SendRequest send = new SendRequest();
 		String messageType=new String();
 		String fileId=file.getFileId();
 		System.out.println(messageType);
-		int mc_port=8885;
-		String mc_address = "225.0.0.1";
-		int mdb_port=8887;
-		String mdb_address = "225.0.0.3";
+		
 
 		if(type.equals("BACKUP PROTOCOL\n")) {
 			messageType="PUTCHUNK";
 		}
 		else if(type.equals("RESTORE PROTOCOL\n")) {
 			messageType="GETCHUNK";
+			createFolder();
 		}
 		else if(type.equals("DELETE PROTOCOL\n")) {
 			messageType="DELETE";
@@ -143,24 +162,26 @@ public class TCP_Server implements Runnable {
 			for(int i=0; i<file.getChunks().size(); i++) {
 
 				ParseMessage msg = new ParseMessage();
-				byte[] header = msg.header(messageType, version, senderId, fileId, file.getChunks().get(i).getChunkId(), file.getChunks().get(i).getReplicationDegree(), crlf);
+				byte[] header = msg.header(messageType, version, senderId, fileId, file.getChunks().get(i).getChunkId(), file.getReplicationDegree(), crlf);
 				byte[] message = msg.merge(header, file.getChunks().get(i).getContent());
-
-				send.sendRequest(message, mdb_port, mdb_address);
+				//System.out.println("SIZE1: "+ new String(file.getChunks().get(i).getContent()));
+				
+				send.sendRequest(message, mdb_port, mdb_address, senderId);
 				history.add(filename, fileId, Integer.toString(file.getChunks().get(i).getChunkId()), senderId, messageType, "SENT");
+				
 			}
 		}
 		else if(messageType.equals("DELETE")){
 			ParseMessage msg = new ParseMessage();
 			byte[] header = msg.header(messageType, version, senderId, fileId, 0, 0, crlf);
-			send.sendRequest(header, mc_port, mc_address);
+			send.sendRequest(header, mc_port, mc_address,senderId);
 			history.add(filename, fileId, "-", senderId, messageType, "SENT");
 
 		}
 		else if(messageType.equals("RECLAIM")){
 			ParseMessage msg = new ParseMessage();
-			FileProcessor fp = new FileProcessor();
-			
+			FileProcessor fp = new FileProcessor(senderId);
+
 			System.out.println("INITIAL SPACE: " + space);
 			while(space > 0){
 				fileId=fp.getBestCandidate(fp.getChunkNames());
@@ -170,21 +191,24 @@ public class TCP_Server implements Runnable {
 				byte[] header = reply.getBytes();
 				System.out.println("REPLY: " + reply);
 				space-=fp.getFileSize(fileId+"-"+fp.getNum(fp.getBestIndex(fp.getChunkNames()))+".bin");
-				send.sendRequest(header, mc_port, mc_address);
-	
+				send.sendRequest(header, mc_port, mc_address, senderId);
+
 			}
 			System.out.println("FINAL SPACE: " + space);
 			history.add("-", "-", "-", senderId, messageType, "SENT");
 
 		}
 		else if(messageType.equals("GETCHUNK")){
-			FileProcessor fp = new FileProcessor();
+			FileProcessor fp = new FileProcessor(senderId);
+			int[] pos = fp.getPos(fp.getChunkNums());
 			for(int i=0; i<fp.getChunkNums().size(); i++) {
 				ParseMessage msg = new ParseMessage();
-				byte[] header = msg.header(messageType, version, senderId, fp.getChunkNames().get(i),  Integer.parseInt(fp.getChunkNums().get(i)), 0, crlf);
-				send.sendRequest(header, mc_port, mc_address);	
-				history.add(filename, fp.getChunkNames().get(i), fp.getChunkNums().get(i), senderId, messageType, "SENT");
+				byte[] header = msg.header(messageType, version, senderId, fp.getChunkNames().get(i),  pos[i], 0, crlf);
+				System.out.println("POS: " + pos[i]);
+				send.sendRequest(header, mc_port, mc_address, senderId);	
+				history.add(filename, fp.getChunkNames().get(i), Integer.toString(pos[i]), senderId, messageType, "SENT");
 			}
+			changeFilename(fileId);
 		}
 	}
 
@@ -215,5 +239,31 @@ public class TCP_Server implements Runnable {
 			}
 			//System.out.println("TCP End");
 		}
+	}
+	
+	
+	public static void createFolder(){
+		File folder = new File("restoredFiles");
+
+		if (!folder.exists())
+		{
+			folder.mkdir();
+		}
+	}
+	
+	public static void changeFilename(String filename) throws IOException{
+		
+		ParseLog pl = new ParseLog();
+		
+		File folder = new File("restoredFiles");
+		
+		File[] files = folder.listFiles();
+
+		for(int i=0;i<files.length;i++){
+			if(files[i].getName().equals(filename)){
+				System.out.println("YES: "+pl.getFile(filename));
+				files[i].renameTo(new File(pl.getFile(filename)));
+			}
+		}		
 	}
 }
