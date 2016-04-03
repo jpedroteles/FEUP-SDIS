@@ -37,6 +37,14 @@ public class TCP_Server implements Runnable {
 	public static int mdb_port;
 	public static String mdb_address;
 
+	/** Construtor da classe TCP_Server, esta classe da ligacao tcp do servidor
+	* @param  senderID  Identificador do servidor
+	* @param  mc_a adresso do canal de controlo
+	* @param  mc_p port do canal de controlo
+	* @param  mdb_a adresso do canal multicast de backup
+	* @param  mdb_p port do canal multicast de backup
+	* @param  port port do canal
+ 	*/
 	public TCP_Server(String senderID, String mc_a, int mc_p, String mdb_a, int mdb_p, int port) {
 		port_number=port;
 		mc_port=mc_p;
@@ -48,6 +56,10 @@ public class TCP_Server implements Runnable {
 		thread1.start();
 	}
 
+	/** Cria a socket a ser utilizada na comunicacao
+	* @param  port_number  port do canal
+	* @return a mensagem recebida pela socket criada
+ 	*/
 	public String communication(int port_number) throws IOException, NoSuchAlgorithmException, CloneNotSupportedException {       
 
 		String input;
@@ -70,6 +82,10 @@ public class TCP_Server implements Runnable {
 		return response;
 	}
 
+	/** Processa a mensagem que recebe
+	* @param  received  string a processar
+	* @return ret o protocolo a ser utilizado
+ 	*/
 	public String processor(String received) throws NoSuchAlgorithmException, CloneNotSupportedException, IOException {
 
 		FileProcessor fp = new FileProcessor(senderId);
@@ -114,6 +130,10 @@ public class TCP_Server implements Runnable {
 
 	}
 
+	/** Retorna uma mensagem
+	* @param  s  string com todos os argumentos
+	* @return ret string com a mensagem
+ 	*/
 	public String get_message(String s) {
 
 		String ret=new String();
@@ -127,6 +147,10 @@ public class TCP_Server implements Runnable {
 		return ret;
 	}
 
+	/** Envia uma mensagem com o protocolo a ser utilizado  e o ficheiro afetado por ele
+	* @param  type  string o tipo de protocolo a ser chamado
+	* @param file nome do ficheiro sobre o qual vai ser utilizado o protocolo
+ 	*/
 	public static void send_message(String type, SingleFile file) throws IOException, InterruptedException {
 
 		SendRequest send = new SendRequest();
