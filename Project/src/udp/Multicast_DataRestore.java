@@ -9,18 +9,31 @@ import parser.ParseMessage;
 import protocols.History;
 
 public class Multicast_DataRestore implements Runnable {
-
+	/** Thread de tratamento do protocolo */
 	public static Thread mdr_thread;
+	/** Numero de porta multicast restore*/
 	public static int mdr_port;
+	/** Adereco de porta multicast restore*/
 	public static String mdr_address;
+	/** Socket multicast restore*/
 	public static MulticastSocket mdr;
+	/** Adereco de porta multicast control*/
 	public static InetAddress mdrAddress;
+	/** Identificador do servidor*/
 	public String ServerID;
+	/** Parse da mensagem*/
 	public ParseMessage pm = new ParseMessage();
+	/** Flag de fim*/
 	private static char crlf[] = {0xD,0xA};
+	/** Novo historico*/
 	public History hist = new History();
 
 
+	/** Inicializa o multicast de data restore
+	* @param ServerId mensagem a ser enviada
+	* @param mdr_a adereco do canal restore
+	* @param mdr_p porta do canal restore
+ 	*/
 	public Multicast_DataRestore(String ServerId, String mdr_a, int mdr_p) throws IOException{
 		mdr_port=mdr_p;
 		mdr_address=mdr_a;
@@ -34,6 +47,8 @@ public class Multicast_DataRestore implements Runnable {
 		mdr_thread.start();
 	}
 
+	/** Recebe uma mensagem do canal separa em header e conteudo, chama o processamento respetivo e adiciona ao historico
+ 	*/
 	public void mdr_communication() throws IOException{
 
 		byte[] data= new byte[65536];
@@ -51,6 +66,9 @@ public class Multicast_DataRestore implements Runnable {
 		MessageProcessor msg_pro = new MessageProcessor(header, content, ServerID, mdr_port, mdr_address);
 	}
 
+
+	/** Thread que gera o canal de comunicacao
+ 	*/
 	public void run() {
 		
 		while(true) {
