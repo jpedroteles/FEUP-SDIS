@@ -11,18 +11,36 @@ import protocols.History;
 
 public class Multicast_DataBackup implements Runnable {
 
+	/** Thread de tratamento do protocolo */
 	public static Thread mdb_thread;
+	/** Numero de porta multicast backup*/
 	public static int mdb_port;
+	/** Adereco de porta multicast backup*/
 	public static String mdb_address;
+	/** Numero de porta multicast control*/
 	public static int mc_port;
+	/** Adereco de porta multicast control*/
 	public static String mc_address;
+	/** Socket multicast backup*/
 	public static MulticastSocket mdb;
+	/** Adereco de porta multicast control*/
 	public static InetAddress mdbAddress;
+	/** Parse da mensagem*/
 	public ParseMessage pm = new ParseMessage();
+	/** Flag de fim*/
 	private static char crlf[] = {0xD,0xA};
+	/** Identificador do servidor*/
 	public String ServerID;
+	/** Novo historico*/
 	public History hist = new History();
 
+	/** Inicializa o multicast de backup
+	* @param ServerId mensagem a ser enviada
+	* @param mdb_a adereco do canal backup
+	* @param mdb_p porta do canal backup
+	* @param mc_a adereco do canal controlo
+	* @param mc_p porta do canal controlo
+ 	*/
 	public Multicast_DataBackup(String ServerId, String mdb_a, int mdb_p, String mc_a, int mc_p) throws IOException{
 		mdb_port=mdb_p;
 		mdb_address=mdb_a;
@@ -37,6 +55,8 @@ public class Multicast_DataBackup implements Runnable {
 		mdb_thread.start();
 	}
 
+	/** Recebe uma mensagem do canal separa em header e conteudo, chama o processamento respetivo e adiciona ao historico
+ 	*/
 	public void mdb_communication() throws IOException{
 
 		byte[] data= new byte[65536];
@@ -54,6 +74,8 @@ public class Multicast_DataBackup implements Runnable {
 		
 	}
 
+	/** Thread que gera o canal de comunicacao
+ 	*/
 	public void run() {
 		
 		while(true) {
