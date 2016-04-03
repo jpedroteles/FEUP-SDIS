@@ -20,10 +20,20 @@ import udp.SendRequest;
 import protocols.Utils;
 
 public class Restore {
+/** Numero de porta multicast restore */
     int mdr_port;
+    /** adresso de porta multicast restore */
     String mdr_address;
+    /** Flag de fim */
     private static char crlf[] = {0xD,0xA};
  
+ /** Construtor da classe Restore esta classe trata de fazer o restore do chunk de um ficheiro
+	* @param  header  header da mensagem
+	* @param  content conteudo do chunk
+	* @param  senderId identificador do cliente
+	* @param  pt porta multicast
+	* @param  a Adresso multicast
+ 	*/
     public Restore (String header, String serverId, int pt, String a) throws IOException, InterruptedException {
     	mdr_port=pt;
     	mdr_address=a;
@@ -56,11 +66,19 @@ public class Restore {
         
     }
  
+ 	/** Retorna o identificador de um ficheiro
+	* @param  file ficheiro do qual se quer o identificadro
+	* @return split string com o identificador
+ 	*/
     public String getFileId(File files){
         String[] split=files.getName().split("-");
         return split[0];
     }
  
+  	/** Retorna o numero de um chunk
+	* @param  file ficheiro do qual se quer o numero
+	* @return split string com o numero do chunk
+ 	*/
     public String getChunkNum(File files){
         String[] split=files.getName().split("-");
         String[] ret=split[1].split(".bin");
