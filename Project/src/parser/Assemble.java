@@ -18,7 +18,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Assemble {
-
+	
+	/*Construtor da classe assemble, esta classe trata de juntar os chunks de um ficheiro
+	* @param  header  header da mensagem
+	* @param  content conteudo do chunk
+	* @param  senderId identificador do cliente
+ 	*/
 	public Assemble(String header, byte[] content, String senderId) throws IOException {
 		ParseMessage pm = new ParseMessage();
 		//System.out.print("YES1");
@@ -30,7 +35,12 @@ public class Assemble {
 			writeChunks(fileId, chunkNum, content, senderId);	
 		}	
 	}
-	
+	/*Faz a juncao dos chunk num  unico ficheiro
+	* @param  hash  hash do chunk
+	* @param  chunkNum numero do chunk
+	* @param  content conteudo do chunk
+	* @param senderId senderId identificador do cliente
+ 	*/	
 	public void writeChunks(String hash, String chunkNum, byte[] content, String senderId) throws IOException{
 		
 		ParseLog pl = new ParseLog();
@@ -43,7 +53,10 @@ public class Assemble {
 		System.arraycopy(content, 0, c, 0, c.length);
 		out.write(c);
 	}
-	
+	/*Retorna o tamanho do chunk
+	* @param  content  conteudo do chunk
+	* @return um inteiro com a dimensao do chunk
+ 	*/	
 	public int getSize(byte[] content){
 		int ret=0;
 		for(int i=0;i<content.length;i++){
