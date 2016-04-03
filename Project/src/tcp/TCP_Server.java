@@ -155,12 +155,13 @@ public class TCP_Server implements Runnable {
 			for(int i=0; i<file.getChunks().size(); i++) {
 
 				ParseMessage msg = new ParseMessage();
+				ParseLog pl = new ParseLog();
 				byte[] header = msg.header(messageType, version, senderId, fileId, file.getChunks().get(i).getChunkId(), file.getReplicationDegree(), crlf);
 				byte[] message = msg.merge(header, file.getChunks().get(i).getContent());
 				
 				send.sendRequest(message, mdb_port, mdb_address, senderId);
 				history.add(filename, fileId, Integer.toString(file.getChunks().get(i).getChunkId()), senderId, messageType, "SENT");
-				
+				System.out.println("REPLICATION DEGREE: " + pl.countRepDegree(fileId, Integer.toString(file.getChunks().get(i).getChunkId()), senderId));
 			}
 		}
 		else if(messageType.equals("DELETE")){
