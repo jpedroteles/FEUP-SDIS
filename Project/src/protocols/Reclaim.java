@@ -10,11 +10,20 @@ import parser.ParseMessage;
 import udp.SendRequest;
 
 public class Reclaim {
-
+	/** Numero de porta multicast control */
 	int mc_port;
+	/** Adresso multicast control */
 	String mc_address;
+	/** Flag de fim */
 	char crlf[] = {0xD,0xA};
 
+	/** Construtor da classe Reclaim esta classe trata de fazer o reclaim do chunk de um ficheiro
+	* @param  header  header da mensagem
+	* @param  content conteudo do chunk
+	* @param  senderId identificador do cliente
+	* @param  pt porta multicast control
+	* @param  a Adresso multicast
+ 	*/
 	public Reclaim(String header, byte[] content, String serverId, int pt, String a) throws IOException{
 		mc_port=pt;
 		mc_address=a;
