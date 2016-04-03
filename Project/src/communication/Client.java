@@ -7,6 +7,9 @@ import tcp.TCP_Client;
 
 public class Client {
 
+	/** Inicializa a comunicacao tcp do cliente
+	* @param args argumentos utilizar
+ 	*/
 	public static void main(String[] args) throws IOException {
 		
 		if(valid_message(args)) {
@@ -20,6 +23,11 @@ public class Client {
 		}
 	}
 	
+	
+	/** Faz a verificacao dos argumentos
+	* @param args argumentos a verificar
+	* @return true se a mensagem for valida false se nao o for
+ 	*/
 	public static boolean valid_message(String[] args) {
 		
 		if(args.length < 3) {
@@ -42,7 +50,11 @@ public class Client {
 		} 
 		return true;
 	}
-	
+
+	/** Verifica se a string é um inteiro
+	* @param s string a verificar
+	* @return true se a string for inteiro false se nao o for
+ 	*/
 	public static boolean isInteger(String s) {
 	    try { 
 	        Integer.parseInt(s); 
@@ -54,6 +66,10 @@ public class Client {
 	    return true;
 	}
 	
+	/** Verifica se e um protocolo aceite pelo programa
+	* @param s string a verificar
+	* @return true se a string for inteiro false se nao o for
+ 	*/
 	public static boolean isProtocol(String s) {
 		if(s.equals("BACKUP") || s.equals("RESTORE") || s.equals("DELETE") || s.equals("RECLAIM")) {
 			return true;
