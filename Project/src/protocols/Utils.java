@@ -11,7 +11,6 @@ public class Utils {
 		if (!folder.exists())
 		{
 			folder.mkdir();
-			//System.out.println("FOLDER chunks CREATED");
 		}
 	}
 

@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Assemble {
 
@@ -25,14 +26,13 @@ public class Assemble {
 		String chunkNum = pm.getChunkNum(header);
 		
 		if(!senderId.equals(pm.getSenderId(header))){
-			System.out.println(senderId + "-" + pm.getSenderId(header) + "POS REC: " + chunkNum);
 			
 			writeChunks(fileId, chunkNum, content, senderId);	
 		}	
 	}
 	
 	public void writeChunks(String hash, String chunkNum, byte[] content, String senderId) throws IOException{
-		//System.out.print("YES");
+		
 		ParseLog pl = new ParseLog();
 		File file = new File("restoredFiles/"+senderId+"-"+pl.getFile(hash));
 		if(!file.exists()) {

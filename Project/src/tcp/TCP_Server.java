@@ -32,10 +32,6 @@ public class TCP_Server implements Runnable {
 	public static int space=0;
 	public static History history = new History();
 	public static String filename;
-	/*public static int mc_port=8885;
-	public static String mc_address = "225.0.0.1";
-	public static int mdb_port=8887;
-	public static String mdb_address = "225.0.0.3";*/
 	public static int mc_port;
 	public static String mc_address;
 	public static int mdb_port;
@@ -62,8 +58,7 @@ public class TCP_Server implements Runnable {
 			Socket connectionSocket = welcomeSocket.accept();             
 			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));             
 			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());             
-			input = inFromClient.readLine();             
-			//System.out.println("Received: " + input);             
+			input = inFromClient.readLine();                       
 			response = processor(input) + '\n';             
 			outToClient.writeBytes(response);
 			if(response.equals("BACKUP PROTOCOL\n") || response.equals("RESTORE PROTOCOL\n") || response.equals("DELETE PROTOCOL\n") || response.equals("RECLAIM PROTOCOL\n")) {
@@ -136,9 +131,7 @@ public class TCP_Server implements Runnable {
 
 		SendRequest send = new SendRequest();
 		String messageType=new String();
-		String fileId=file.getFileId();
-		System.out.println(messageType);
-		
+		String fileId=file.getFileId();		
 
 		if(type.equals("BACKUP PROTOCOL\n")) {
 			messageType="PUTCHUNK";
@@ -164,7 +157,6 @@ public class TCP_Server implements Runnable {
 				ParseMessage msg = new ParseMessage();
 				byte[] header = msg.header(messageType, version, senderId, fileId, file.getChunks().get(i).getChunkId(), file.getReplicationDegree(), crlf);
 				byte[] message = msg.merge(header, file.getChunks().get(i).getContent());
-				//System.out.println("SIZE1: "+ new String(file.getChunks().get(i).getContent()));
 				
 				send.sendRequest(message, mdb_port, mdb_address, senderId);
 				history.add(filename, fileId, Integer.toString(file.getChunks().get(i).getChunkId()), senderId, messageType, "SENT");
@@ -182,19 +174,15 @@ public class TCP_Server implements Runnable {
 			ParseMessage msg = new ParseMessage();
 			FileProcessor fp = new FileProcessor(senderId);
 
-			System.out.println("INITIAL SPACE: " + space);
 			while(space > 0){
 				fileId=fp.getBestCandidate(fp.getChunkNames());
-				System.out.println("SPACE: " + space);
 				String reply = "REMOVED " + version + " " + senderId + " " + fileId + " " + fp.getNum(fp.getBestIndex(fp.getChunkNames())) + " " + crlf[0]+crlf[1]+crlf[0]+crlf[1];
 
 				byte[] header = reply.getBytes();
-				System.out.println("REPLY: " + reply);
 				space-=fp.getFileSize(fileId+"-"+fp.getNum(fp.getBestIndex(fp.getChunkNames()))+".bin");
 				send.sendRequest(header, mc_port, mc_address, senderId);
 
 			}
-			System.out.println("FINAL SPACE: " + space);
 			history.add("-", "-", "-", senderId, messageType, "SENT");
 
 		}
@@ -204,7 +192,6 @@ public class TCP_Server implements Runnable {
 			for(int i=0; i<fp.getChunkNums().size(); i++) {
 				ParseMessage msg = new ParseMessage();
 				byte[] header = msg.header(messageType, version, senderId, fp.getChunkNames().get(i),  pos[i], 0, crlf);
-				System.out.println("POS: " + pos[i]);
 				send.sendRequest(header, mc_port, mc_address, senderId);	
 				history.add(filename, fp.getChunkNames().get(i), Integer.toString(pos[i]), senderId, messageType, "SENT");
 			}
@@ -226,18 +213,14 @@ public class TCP_Server implements Runnable {
 	public void run() {
 
 		while(true) {
-			//System.out.println("TCP Thread is running");
 			try {
 				String messageType=communication(port_number);
-				//System.out.println("Message from client recieved...");
 				send_message(messageType, file);
 				Thread.sleep(1000);
 			}
 			catch(InterruptedException | NoSuchAlgorithmException | IOException | CloneNotSupportedException e) {
-				//System.out.println("TCP Catch");
 				break;
 			}
-			//System.out.println("TCP End");
 		}
 	}
 	

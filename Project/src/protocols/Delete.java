@@ -26,11 +26,12 @@ public class Delete {
 				String path= "chunks/" + files[i].getName();      
 		        Path p = FileSystems.getDefault().getPath(path);
 		        Files.delete(p);
-				System.out.println("Chunk deleted");
 
 				hist.add("-", pm.getId(header), Integer.toString(i), serverId, "-", "SENT");
 			}
 		}
+
+		System.out.println("FILE DELETED");
 	}
 	
 	public String getFileId(File files){

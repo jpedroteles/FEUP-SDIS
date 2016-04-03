@@ -77,7 +77,6 @@ public class ParseLog {
 		if(ret < 0){
 			ret=0;
 		}
-		System.out.println("CURRENT REPLICATION DEGREE: " + ret);
 		return ret;
 	}
 

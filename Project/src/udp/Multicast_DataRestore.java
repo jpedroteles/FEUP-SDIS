@@ -11,8 +11,6 @@ import protocols.History;
 public class Multicast_DataRestore implements Runnable {
 
 	public static Thread mdr_thread;
-	/*public static int mdr_port=8886;
-	public static String mdr_address = "225.0.0.2";*/
 	public static int mdr_port;
 	public static String mdr_address;
 	public static MulticastSocket mdr;
@@ -31,7 +29,7 @@ public class Multicast_DataRestore implements Runnable {
 		mdr = new MulticastSocket(mdr_port);
 		mdrAddress = InetAddress.getByName(mdr_address);
 		mdr.joinGroup(mdrAddress);
-		//mdr.setLoopbackMode(true);
+		mdr.setLoopbackMode(true);
 		mdr_thread = new Thread(this, "mdr_Thread created");
 		mdr_thread.start();
 	}
@@ -46,22 +44,20 @@ public class Multicast_DataRestore implements Runnable {
 		String header = pm.getHeader(packet, crlf);
 		byte[] content = pm.getContent(packet, crlf);
 		
-		//System.out.println("RESTORED RECIEVED: " + header);
 		hist.add("-", pm.getId(header), pm.getChunkNum(header), pm.getSenderId(header), pm.getMessageType(header), "RECEIVED");
 
+		System.out.println(header);
+		
 		MessageProcessor msg_pro = new MessageProcessor(header, content, ServerID, mdr_port, mdr_address);
 	}
 
 	public void run() {
 		
 		while(true) {
-			//System.out.println("mdr Thread is running");
 			try {
 				mdr_communication();
-				//mdr_thread.sleep(1000);
 			}
 			catch(IOException e) {
-				//System.out.println("mdr - Exception");
 				break;
 			}
 		}

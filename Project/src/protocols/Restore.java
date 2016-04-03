@@ -41,16 +41,14 @@ public class Restore {
         File folder = new File("chunks");
         File[] files = folder.listFiles();
         Arrays.sort(files);
-        
+
+		System.out.println(reply);
         for(int i=0; i<files.length;i++){
-        	//System.out.println(pm.getId(header)+"=="+getFileId(files[i]));
-        	//System.out.println(pm.getChunkNum(header)+"=="+getChunkNum(files[i]));
             if(pm.getId(header).equals(getFileId(files[i])) && pm.getChunkNum(header).equals(getChunkNum(files[i]))){
             	
             	Path path = Paths.get("chunks/"+pm.getId(header)+"-"+pm.getChunkNum(header)+".bin");
                 temp = Files.readAllBytes(path);
                 byte[] newData=pm.merge(data,temp);
-                System.out.println("RESTORED SENT: " + newData.length);
                 send.sendRequest(newData, mdr_port, mdr_address, serverId);
                 hist.add("-", pm.getId(header), pm.getChunkNum(header), serverId, "CHUNK", "SENT");
             }

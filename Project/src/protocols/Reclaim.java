@@ -28,7 +28,6 @@ public class Reclaim {
 		File[] files = folder.listFiles();
 
 		String path= "chunks/" + pm.getId(header)+"-"+pm.getChunkNum(header)+".bin"; 
-		System.out.println(path);
 		Path p = FileSystems.getDefault().getPath(path);
 		Files.delete(p);
 		hist.add("-", pm.getId(header), pm.getChunkNum(header), serverId, "REMOVED", "SENT");

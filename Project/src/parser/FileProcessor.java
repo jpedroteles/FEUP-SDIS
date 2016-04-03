@@ -55,8 +55,6 @@ public class FileProcessor {
 				}
 				chunkPart = new byte[readLength];
 				read = inputStream.read(chunkPart,0,readLength);
-				//FileOutputStream out = new FileOutputStream(readLength+""+fileSize);
-				//out.write(chunkPart);
 				fileSize -= read;
 
 				assert (read == chunkPart.length);
@@ -87,7 +85,6 @@ public class FileProcessor {
 		for(int i=0; i<files.length; i++){
 			
 			Path path = Paths.get(files[i].getPath());
-			//System.out.println(path);
 			ret.add(Files.readAllBytes(path));
 		}
 		return ret;
@@ -98,10 +95,8 @@ public class FileProcessor {
 		
 		File folder = new File("chunks");
 		File[] files = folder.listFiles();
-		//System.out.println("LENGTH: " + files.length);
 		for(int i=0; i<files.length; i++){
 			
-			//System.out.println("NAME:" + getFileId(files[i]));
 			ret.add(getFileId(files[i]));
 		}
 		return ret;
@@ -117,10 +112,8 @@ public class FileProcessor {
 		
 		File folder = new File("chunks");
 		File[] files = folder.listFiles();
-		//System.out.println("LENGTH: " + files.length);
 		for(int i=0; i<files.length; i++){
 			
-			//System.out.println("NAME:" + getFileId(files[i]));
 			ret.add(getFileNum(files[i]));
 		}
 		return ret;
@@ -128,7 +121,6 @@ public class FileProcessor {
 	
 	public String getFileNum(File files){
 		String[] split=files.getName().split("-");
-		//System.out.println(split[1]);
 		String[] ret=split[1].split(".bin");
 		return ret[0];
 	}
@@ -169,7 +161,6 @@ public class FileProcessor {
 		for(int i=0; i<files.length; i++){
 			
 			if(files[i].getName().equals(filename)){
-				System.out.println("AQUI");
 				ret=files[i].length();
 			}
 		}

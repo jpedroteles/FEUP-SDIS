@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.Arrays;
 
 import parser.ParseMessage;
 import udp.SendRequest;
@@ -28,24 +29,18 @@ public class Backup {
 		
 		utils.checkFolder();
 
-		//System.out.println("SIZE2: "+ new String(content).getBytes().length);
-		//System.out.println(new String(content));
 		String fileId = pm.getId(header) + "-" + pm.getChunkNum(header) + ".bin";
 		if(!utils.checkFile(fileId)) {
 			String name = "chunks/" + fileId;
-			//System.out.println("CONTENT SIZE: "+ content.length);
 			FileOutputStream out = new FileOutputStream(name);
 			byte[] c = new byte[getSize(content)];
 			System.arraycopy(content, 0, c, 0, c.length);
 			out.write(c);
 			
-			System.out.println("Reply: " + 0);
-		}
-		else {
-			System.out.println("Reply: " + -1);
 		}
 		
 		String reply = "STORED " + pm.getVersion(header) + " " + ServerId + " " + pm.getId(header) + " " + pm.getChunkNum(header) + " " + crlf[0]+crlf[1]+crlf[0]+crlf[1];	
+		System.out.println(reply);
 		send.sendRequest(reply.getBytes(), mc_port, mc_address, ServerId);
 		hist.add("-", pm.getId(header), pm.getChunkNum(header), ServerId, "STORED", "SENT");
 	}

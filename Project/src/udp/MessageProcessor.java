@@ -24,7 +24,6 @@ public class MessageProcessor implements Runnable {
 		address=a;
 		serverId=ServerID;
 		header = h;
-		//System.out.println("MESSAGE 2 : " + new String(c));
 		content = c;
 		msg_thread = new Thread(this, "msg_Thread created");
 		msg_thread.start();
@@ -33,7 +32,6 @@ public class MessageProcessor implements Runnable {
 	public void process_message() throws IOException, InterruptedException {
 		
 		String messageType = pm.getMessageType(header);
-		//System.out.println("MESSAGE: " + new String(content));
 
 		switch(messageType){
 		case("PUTCHUNK"): {
@@ -49,7 +47,6 @@ public class MessageProcessor implements Runnable {
 			Restore restore = new Restore(header, serverId, port, address);
 			break;}
 		case("CHUNK"): {
-			//System.out.println("CHUNK");
 			Assemble assemble = new Assemble(header, content, serverId);
 			break;}
 		default: break;

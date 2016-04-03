@@ -30,7 +30,6 @@ public class ParseMessage {
 		byte[] ret12 = merge(ret11, end);
 		byte[] ret = merge(ret12, end);
 		
-		//System.out.println(new String(ret));
 		
 		return ret;
 	}
@@ -50,7 +49,6 @@ public class ParseMessage {
 		String temp=new String(packet.getData(), 0, packet.getLength());
 		String[] parts = temp.split(split);
 		
-		//System.out.println("HEADER: " + parts[0]);
 		return parts[0];
 	}
 	
