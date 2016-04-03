@@ -9,6 +9,9 @@ import java.net.Socket;
 
 public class TCP_Client {
 
+	/** Construtor da classe TCP_Client, esta classe da ligacao tcp do cliente
+	* @param  args  array com os argumentos que constituem a operacao a ser realizada
+ 	*/
 	public void communication(String[] args) throws IOException {
 		
 		InetAddress IP=InetAddress.getLocalHost();
@@ -33,6 +36,10 @@ public class TCP_Client {
 		clientSocket.close(); 
 	}
 	
+	/** Retorna uma mensagem
+	* @param  arg  string com todos os argumentos
+	* @return ret string com a mensagem
+ 	*/	
 	public static String get_message(String arg) {
 		
 		String ret = new String();
