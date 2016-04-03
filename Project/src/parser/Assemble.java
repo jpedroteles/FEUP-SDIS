@@ -19,7 +19,7 @@ import java.util.Arrays;
 
 public class Assemble {
 	
-	/*Construtor da classe assemble, esta classe trata de juntar os chunks de um ficheiro
+	/** Construtor da classe assemble, esta classe trata de juntar os chunks de um ficheiro
 	* @param  header  header da mensagem
 	* @param  content conteudo do chunk
 	* @param  senderId identificador do cliente
@@ -35,7 +35,7 @@ public class Assemble {
 			writeChunks(fileId, chunkNum, content, senderId);	
 		}	
 	}
-	/*Faz a juncao dos chunk num  unico ficheiro
+	/** Faz a juncao dos chunk num  unico ficheiro
 	* @param  hash  hash do chunk
 	* @param  chunkNum numero do chunk
 	* @param  content conteudo do chunk
@@ -53,7 +53,7 @@ public class Assemble {
 		System.arraycopy(content, 0, c, 0, c.length);
 		out.write(c);
 	}
-	/*Retorna o tamanho do chunk
+	/** Retorna o tamanho do chunk
 	* @param  content  conteudo do chunk
 	* @return um inteiro com a dimensao do chunk
  	*/	
