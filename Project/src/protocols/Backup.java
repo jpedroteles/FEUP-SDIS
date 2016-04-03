@@ -16,7 +16,7 @@ import udp.SendRequest;
 public class Backup {
 	/** Numero de porta multicast control */
 	int mc_port;
-	/** Adresso multicast control */
+	/** Adereco multicast control */
 	String mc_address;
 	/** Flag de fim */
 	char crlf[] = {0xD,0xA};
@@ -26,7 +26,7 @@ public class Backup {
 	* @param  content conteudo do chunk
 	* @param  senderId identificador do cliente
 	* @param  mc_p porta multicast control
-	* @param  mc_a Adresso multicast
+	* @param  mc_a Adereco multicast
  	*/
 	public Backup(String header, byte[] content, String ServerId, int mc_p, String mc_a) throws IOException, InterruptedException{
 		mc_port=mc_p;
