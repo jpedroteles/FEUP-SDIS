@@ -23,6 +23,7 @@ public class FileProcessor {
 
 	/** Retorna o identificador de um determinado ficheiro
 	* @param  filename  nome original de um ficheiro
+	* @return fileId string com o identificador
  	*/
 	public String get_fileId(String filename) throws CloneNotSupportedException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		
@@ -40,6 +41,7 @@ public class FileProcessor {
 	/** RDivide um ficheiro chunks de tamanho especifico
 	* @param  filename  nome original de um ficheiro
 	* @param maxSize tamanho maximo por chunk
+	* @return array com o chunks do ficheiro
  	*/
 	public ArrayList<byte[]> divide_in_chunks(String filename, int maxSize) {
 
@@ -119,6 +121,7 @@ public class FileProcessor {
 	}
 	
 	/** Retorna um identificador de um ficheiro
+	* @param files ficheiro com os dados do ficheiro
 	* @return de um ArrayList com respetivos nomes
  	*/
 	public String getFileId(File files){
@@ -142,6 +145,7 @@ public class FileProcessor {
 	}
 	
 	/** Retorna o numero de um ficheiro
+	* @param files ficheiro com os dados do ficheiro
 	* @return de uma string com o numero do ficheiro
  	*/
 	public String getFileNum(File files){
@@ -182,6 +186,7 @@ public class FileProcessor {
 	}
 	
 	/** Retorna o numero de um chunk
+	* @idenx indice  
 	* @return de um inteiro com o respetivo numero
  	*/
 	public int getNum(int index) throws IOException{
