@@ -5,6 +5,16 @@ import java.util.Arrays;
 
 public class ParseMessage {
 
+	/** Junto todos os componentes do header num byte array
+	* @param messageType Tipo de mensage
+	* @param version Versao de programa
+	* @param senderId Identificador do remetente
+	* @param fileIde Identificador do ficheiro
+	* @param chunkId Identificador do chunk
+	* @param ReplicationDegree numero de copia
+	* @param crlf flag de fim de mensagem
+	* @return ret header da mensagem
+ 	*/
 	public byte[] header(String messageType, String version, String senderId, String fileId, int chunkId, int ReplicationDegree, char[] crlf){
 		
 		byte[] msgType = messageType.getBytes();
@@ -34,6 +44,11 @@ public class ParseMessage {
 		return ret;
 	}
 	
+	/** Faz a juncao de dois arrays
+	 * @param header primeiro array
+	 * @param content segundo array
+	* @return ret array final
+ 	*/
 	public byte[] merge(byte[] header, byte[] content){
 		
 		byte[] ret = new byte[header.length + content.length];
@@ -43,6 +58,11 @@ public class ParseMessage {
 		return ret;
 	}
 
+	/** Retorna o header de um packet
+	 * @param packet packet a extrair header
+	 * @param crlf flag de fim
+	* @return parts header do packet
+ 	*/
 	public String getHeader(DatagramPacket packet, char[] crlf) {
 		
 		String split = "" + crlf[0] + crlf[1];
@@ -51,7 +71,12 @@ public class ParseMessage {
 		
 		return parts[0];
 	}
-	
+
+	/** Retorna o conteudo de um packet
+	 * @param packet packet a extrair conteudo
+	 * @param crlf flag de fim
+	* @return parts conteudo do packet
+ 	*/	
 	public byte[] getContent(DatagramPacket packet, char[] crlf) {
 		
 		byte[] temp=packet.getData();
@@ -59,31 +84,55 @@ public class ParseMessage {
 		return content(temp, crlf);
 	}
 	
+	/** Retorna o identificador
+	* @param header string onde esta o identificador
+	* @return split string com o resultado final
+ 	*/
 	public String getId(String header) {
 		String[] split = header.split(" ");
 		return split[3];
 	}
 	
+	/** Retorna o tipo de mensagem
+	* @param header string onde esta o identificador
+	* @return split string com o resultado final
+ 	*/
 	public String getMessageType(String header) {
 		String[] split = header.split(" ");
 		return split[0];
 	}
 	
+	/** Retorna o numero do chunk
+	* @param header string onde esta o numero do chunk
+	* @return split string com o resultado final
+ 	*/
 	public String getChunkNum(String header) {
 		String[] split = header.split(" ");
 		return split[4];
 	}
 	
+	/** Retorna a versao do programa
+	* @param header string onde esta a versao
+	* @return split string om o resultado final
+ 	*/
 	public String getVersion(String header) {
 		String[] split = header.split(" ");
 		return split[1];
 	}
 	
+	/** Retorna o identificador da mensagem
+	* @param header string onde esta o identificador
+	* @return split string com o resultado final
+ 	*/
 	public String getSenderId(String header) {
 		String[] split = header.split(" ");
 		return split[2];
 	}
 	
+	/** Retorna o conteudo de mensagem
+	* @param message array com a mensagem
+	* @return ret string com o resultado final
+ 	*/
 	public byte[] content(byte[] message, char[] crlf){
 		boolean flag=false;
 		int j=0;
