@@ -14,11 +14,20 @@ import parser.ParseMessage;
 import udp.SendRequest;
 
 public class Backup {
-	
+	/** Numero de porta multicast control */
 	int mc_port;
+	/** Adresso multicast control */
 	String mc_address;
+	/** Flag de fim */
 	char crlf[] = {0xD,0xA};
 	
+	/** Construtor da classe backup esta classe trata de fazer o backup do chunk de um ficheiro
+	* @param  header  header da mensagem
+	* @param  content conteudo do chunk
+	* @param  senderId identificador do cliente
+	* @param  mc_p porta multicast control
+	* @param  mc_a Adresso multicast
+ 	*/
 	public Backup(String header, byte[] content, String ServerId, int mc_p, String mc_a) throws IOException, InterruptedException{
 		mc_port=mc_p;
 		mc_address = mc_a;
@@ -44,7 +53,11 @@ public class Backup {
 		send.sendRequest(reply.getBytes(), mc_port, mc_address, ServerId);
 		hist.add("-", pm.getId(header), pm.getChunkNum(header), ServerId, "STORED", "SENT");
 	}
-	
+
+	/** Retorna o tamanho do conteudo
+	* @param  content  conteudo
+	* @return um inteiro com a dimensao do conteudo
+ 	*/		
 	public int getSize(byte[] content){
 		int ret=0;
 		for(int i=0;i<content.length;i++){
