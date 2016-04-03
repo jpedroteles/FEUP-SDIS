@@ -11,6 +11,11 @@ import udp.SendRequest;
 
 public class Delete {
 
+ /** Construtor da classe Dele esta classe trata de fazer o apagar o chunk de um ficheiro
+	* @param  header  header da mensagem
+	* @param  content conteudo do chunk
+	* @param  senderId identificador do cliente
+ 	*/
 	public Delete(String header, byte[]content, String serverId) throws IOException{
 		
 		ParseMessage pm = new ParseMessage();
@@ -34,6 +39,10 @@ public class Delete {
 		System.out.println("FILE DELETED");
 	}
 	
+	/** Retorna o identificador do ficheiro
+	* @param  files  com os dados do ficheiro
+	* @return split inteiro com o identificador
+ 	*/
 	public String getFileId(File files){
 		String[] split=files.getName().split("-");
 		return split[0];
