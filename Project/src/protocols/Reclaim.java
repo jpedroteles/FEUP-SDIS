@@ -12,7 +12,7 @@ import udp.SendRequest;
 public class Reclaim {
 	/** Numero de porta multicast control */
 	int mc_port;
-	/** Adresso multicast control */
+	/** Adereco multicast control */
 	String mc_address;
 	/** Flag de fim */
 	char crlf[] = {0xD,0xA};
@@ -22,7 +22,7 @@ public class Reclaim {
 	* @param  content conteudo do chunk
 	* @param  senderId identificador do cliente
 	* @param  pt porta multicast control
-	* @param  a Adresso multicast
+	* @param  a Adereco multicast
  	*/
 	public Reclaim(String header, byte[] content, String serverId, int pt, String a) throws IOException{
 		mc_port=pt;
