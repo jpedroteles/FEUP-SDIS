@@ -22,7 +22,7 @@ import protocols.Utils;
 public class Restore {
 /** Numero de porta multicast restore */
     int mdr_port;
-    /** adresso de porta multicast restore */
+    /** adereco de porta multicast restore */
     String mdr_address;
     /** Flag de fim */
     private static char crlf[] = {0xD,0xA};
@@ -32,7 +32,7 @@ public class Restore {
 	* @param  content conteudo do chunk
 	* @param  senderId identificador do cliente
 	* @param  pt porta multicast
-	* @param  a Adresso multicast
+	* @param  a Adereco multicast
  	*/
     public Restore (String header, String serverId, int pt, String a) throws IOException, InterruptedException {
     	mdr_port=pt;
