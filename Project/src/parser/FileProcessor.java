@@ -11,13 +11,19 @@ import java.util.Arrays;
 import javax.xml.bind.DatatypeConverter;
 
 public class FileProcessor {
-	
+	/** Idenficador de um servidor */
 	public static String serverId;
 	
+	/** Construtor da classe FileProcessor, esta classe tem todas as funcoes necessarias para o processamento de um ficheiro
+	* @param  s  Identificador do servidor
+ 	*/
 	public FileProcessor(String s){
 		serverId=s;
 	}
 
+	/** Retorna o identificador de um determinado ficheiro
+	* @param  filename  nome original de um ficheiro
+ 	*/
 	public String get_fileId(String filename) throws CloneNotSupportedException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		
 		File file = new File(filename);
@@ -31,6 +37,10 @@ public class FileProcessor {
 		return DatatypeConverter.printHexBinary(fileId);
 	}
 
+	/** RDivide um ficheiro chunks de tamanho especifico
+	* @param  filename  nome original de um ficheiro
+	* @param maxSize tamanho maximo por chunk
+ 	*/
 	public ArrayList<byte[]> divide_in_chunks(String filename, int maxSize) {
 
 		File inputFile = new File(filename);
@@ -76,6 +86,9 @@ public class FileProcessor {
 		return ret;
 	}
 
+	/** Retorna um array list com todos os chunks
+	* @return de um ArrayList com os respetivos chunks
+ 	*/
 	public ArrayList<byte[]> getMyChunks() throws IOException{
 		ArrayList<byte[]> ret = new ArrayList<byte[]>();
 
@@ -89,7 +102,10 @@ public class FileProcessor {
 		}
 		return ret;
 	}
-	
+
+	/** Retorna um array list com todos os chunks names
+	* @return de um ArrayList com respetivos nomes
+ 	*/	
 	public ArrayList<String> getChunkNames() throws IOException{
 		ArrayList<String> ret = new ArrayList<String>();
 		
@@ -102,11 +118,17 @@ public class FileProcessor {
 		return ret;
 	}
 	
+	/** Retorna um identificador de um ficheiro
+	* @return de um ArrayList com respetivos nomes
+ 	*/
 	public String getFileId(File files){
 		String[] split=files.getName().split("-");
 		return split[0];
 	}
 	
+	/** Retorna um array list com todos os numeros dos chunks
+	* @return de um ArrayList com os respetivos numeros
+ 	*/
 	public ArrayList<String> getChunkNums() throws IOException{
 		ArrayList<String> ret = new ArrayList<String>();
 		
@@ -119,12 +141,19 @@ public class FileProcessor {
 		return ret;
 	}
 	
+	/** Retorna o numero de um ficheiro
+	* @return de uma string com o numero do ficheiro
+ 	*/
 	public String getFileNum(File files){
 		String[] split=files.getName().split("-");
 		String[] ret=split[1].split(".bin");
 		return ret[0];
 	}
 	
+	/** Retorna o melhor candidato para a realizacao da operacao pretendida
+	* @param  chunkNames  arrayList como os nomes dos chunks
+	* @return de uma string com o nome do melhor chunk
+ 	*/
 	public String getBestCandidate(ArrayList<String> chunkNames) throws IOException{
 		
 		ArrayList<Integer> repDegrees = new ArrayList<Integer>();
@@ -137,6 +166,10 @@ public class FileProcessor {
 		return chunkNames.get(index);		
 	}
 	
+	/** Retorna o melhor indice de um array de chunkNames
+	* @param  chunkNames  arrayList como os nomes dos chunks
+	* @return do maximo do array list
+ 	*/
 	public int getBestIndex(ArrayList<String> chunkNames) throws IOException{
 		ArrayList<Integer> repDegrees = new ArrayList<Integer>();
 		ParseLog pl = new ParseLog();
@@ -148,10 +181,17 @@ public class FileProcessor {
 		
 	}
 	
+	/** Retorna o numero de um chunk
+	* @return de um inteiro com o respetivo numero
+ 	*/
 	public int getNum(int index) throws IOException{
 		return Integer.parseInt(getChunkNums().get(index));
 	}
 	
+	/** Retorna o tamanho de um ficheiro
+	* @param  filename  nome do ficheiro
+	* @return de um long com a dimensao do ficheiro
+ 	*/
 	public long getFileSize(String filename){
 		long ret=0;
 		
@@ -167,6 +207,10 @@ public class FileProcessor {
 		return ret;
 	}
 	
+	/** Retorna o maximo de um arraylist
+	* @param  list  array sobre o qual vai procurar o maximo
+	* @return de um inteiro com o maximo do respetivo array
+ 	*/
 	public int getMax(ArrayList<Integer> list){
 		int ret=0;
 		
@@ -179,7 +223,10 @@ public class FileProcessor {
 		return ret;
 	}
 	
-	 
+	/** Retorna a array de inteiros com os numeros dos chunks ordenados 
+	* @param  files  array a ordenar
+	* @return de um array de inteiros ordenados
+ 	*/	 
     public int[] getPos(ArrayList<String> files){
     	int[] chunkNums = new int[files.size()];
     	
