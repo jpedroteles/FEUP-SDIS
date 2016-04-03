@@ -10,7 +10,12 @@ import parser.ParseLog;
 
 public class SendRequest {
 
-
+	/** Envia um pedido do cliente para o servidor
+	* @param message mensagem a ser enviada
+	* @param port_number porta do canal a ser utilizado
+	* @param address adereco do canal a ser utilizado
+	* @param serverId identificador do servidor
+ 	*/
 	public void sendRequest(byte[] message, int port_number, String address, String serverId) throws IOException, InterruptedException{
 
 		MulticastSocket socket = new MulticastSocket(port_number);
