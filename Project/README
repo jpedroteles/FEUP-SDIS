@@ -1,0 +1,18 @@
+Por forma a correr o nosso projecto, devem ser seguidas as seguintes instruções:
+
+1-Correr o número desejado de vezes a class Server.java presente no package communication, utilizando os comandos definidos na TestApp, por exemplo: 
+	
+	java communication.Server 1 224.0.0.1 8001 224.0.0.2 8002 224.0.0.3 8003 8080
+
+  Onde o primeiro argumento é o serverId, o segundo o address do mc_channel, o terceiro a porta do mc_channel, o quarto o address do mdb_channel, o quinto a porta do mdb_channel, o sexto o address do mdr_channel, o sétimo a porta do mdr_channel e, por fim, um ultimo argumento com a porta de ligação à interface TCP.
+
+2-Correr a interface na class Client.java presente no package communication, utilizando os comandos definidos na TestApp, por exemplo: 
+	
+	java communication.Client 8080 BACKUP teste.txt 2
+	java communication.Client 8080 DELETE teste.txt
+	java communication.Client 8080 RECLAIM 130000
+	java communication.Client 8080 RESTORE teste.txt
+
+	Onde o primeiro argumento é a porta de ligação com o TCP, o segundo o tipo de protocolo invocado, o terceiro o ficheiro ou o tamanho a fazer reclaim e, por fim, no caso do BACKUP um quarto argumento com o replication degree desejado.
+
+Nota: É sempre necessário que se encontre a correr um peer antes de correr a interface.
