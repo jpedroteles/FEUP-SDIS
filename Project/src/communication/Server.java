@@ -8,6 +8,9 @@ import udp.*;
 
 public class Server {
 	
+	/** Inicializa a comunicacao tcp do servidor
+	* @param args argumentos utilizar
+ 	*/
 	public static void main(String args[]) throws IOException {
 		
 		if(args.length!=8){
