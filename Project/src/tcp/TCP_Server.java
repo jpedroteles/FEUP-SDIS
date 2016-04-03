@@ -24,17 +24,28 @@ import udp.SendRequest;
 public class TCP_Server implements Runnable {
 
 	SingleFile file = new SingleFile();
+	/** Numero de porta do canal de comunicacao */
 	private static int port_number;
+	/** Identificador do remetente */
 	private static String senderId;
+	/** Versao do programa */
 	private static String version = "1.0";
+	/** Flag de fim */
 	private static char crlf[] = {0xD,0xA};
+	/** Thread usado na comunicacao */
 	public static Thread thread1;
 	public static int space=0;
+	/** Criacao de um novo historico */
 	public static History history = new History();
+	/** Nome do ficheiro */
 	public static String filename;
+	/** Numero de porta multicast control */
 	public static int mc_port;
+	/** Adereco de porta multicast control */
 	public static String mc_address;
+	/** Numero de porta multicast backup */
 	public static int mdb_port;
+	/** Adereco de porta multicast backup */
 	public static String mdb_address;
 
 	/** Construtor da classe TCP_Server, esta classe da ligacao tcp do servidor
@@ -224,6 +235,10 @@ public class TCP_Server implements Runnable {
 		}
 	}
 
+	/** Verifica se uma string e um inteiro
+	* @param  s  string com o conteudo a ser verificado
+	* @param true se for inteiro false se nao for
+ 	*/
 	public static boolean isInteger(String s) {
 		try { 
 			Integer.parseInt(s); 
@@ -235,6 +250,8 @@ public class TCP_Server implements Runnable {
 		return true;
 	}
 
+	/** Thread que envia a mensagem
+ 	*/
 	public void run() {
 
 		while(true) {
@@ -249,7 +266,8 @@ public class TCP_Server implements Runnable {
 		}
 	}
 	
-	
+	/** Cria uma paste de ficheiros restaurados
+ 	*/
 	public static void createFolder(){
 		File folder = new File("restoredFiles");
 
@@ -259,6 +277,9 @@ public class TCP_Server implements Runnable {
 		}
 	}
 	
+	/** Muda o nome de um ficheiro por outro recebido como argumento da funcao
+	* @param  filename  nome a atribuir ao ficheiro
+ 	*/
 	public static void changeFilename(String filename) throws IOException{
 		
 		ParseLog pl = new ParseLog();
